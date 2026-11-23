@@ -39,6 +39,23 @@ function webpTwin(request: NextRequest): NextResponse | null {
   return res;
 }
 
+/**
+ * Donate-only host (e.g. donate.wefdallas.org, set DONATE_HOST). It serves the donate
+ * page at "/", the thank-you page and the Stripe endpoints, and nothing else: any other
+ * page address (the header/footer links, for instance) goes to the main site
+ * (MAIN_SITE_URL). Same app, same database.
+ */
+const DONATE_ONLY_PATHS = /^\/(?:donate|donate-thank-you|api\/checkout|api\/stripe-webhook|api\/admin\/v1(?:\/.*)?|robots\.txt|favicon\.ico)\/?$/;
+
+function donateHostGate(request: NextRequest, host: string, path: string): { rewriteTo?: string; redirectTo?: string } | null {
+  const donateHost = (process.env.DONATE_HOST ?? '').trim().toLowerCase();
+  if (!donateHost || host.toLowerCase().replace(/:\d+$/, '') !== donateHost) return null;
+  if (path === '/') return { rewriteTo: '/donate' };
+  if (DONATE_ONLY_PATHS.test(path) || path.startsWith('/_next/')) return {};
+  const main = (process.env.MAIN_SITE_URL ?? 'https://www.worldwideeducationfoundation.org').replace(/\/+$/, '');
+  return { redirectTo: main + path + request.nextUrl.search };
+}
+
 const LOCAL_HOST = /^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$|\.local(:\d+)?$/i;
 
 export async function proxy(request: NextRequest) {
@@ -61,6 +78,9 @@ export async function proxy(request: NextRequest) {
     if (ext && ext[1] !== 'index') return redirect(request, '/' + ext[1]);
     if (path === '/index.php' || path === '/index.html') return redirect(request, '/');
   }
+
+  const gate = donateHostGate(request, host, path);
+  if (gate?.redirectTo) return NextResponse.redirect(gate.redirectTo, 302);
 
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
   const isDev = process.env.NODE_ENV === 'development';
@@ -86,9 +106,13 @@ export async function proxy(request: NextRequest) {
   requestHeaders.set('Content-Security-Policy', csp);
 
   // Unknown / switched-off pages: render the "Page not found" page (status 404) server-side.
-  const kind = request.method === 'GET' || request.method === 'HEAD' ? await notFoundKind(path, url.searchParams) : null;
+  const kind = request.method === 'GET' || request.method === 'HEAD' ? await notFoundKind(gate?.rewriteTo ?? path, url.searchParams) : null;
   let response: NextResponse;
-  if (kind) {
+  if (!kind && gate?.rewriteTo) {
+    const target = request.nextUrl.clone();
+    target.pathname = gate.rewriteTo;
+    response = NextResponse.rewrite(target, { request: { headers: requestHeaders } });
+  } else if (kind) {
     requestHeaders.set(NOT_FOUND_HEADER, kind);
     const target = request.nextUrl.clone();
     target.pathname = NOT_FOUND_PATH;
