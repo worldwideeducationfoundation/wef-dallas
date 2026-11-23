@@ -1,0 +1,446 @@
+﻿# Re-grant access for the served tree.
+#
+# The .htaccess one level up (website/.htaccess, public_html/.htaccess on
+# Hostinger) denies everything when mod_rewrite is missing, as insurance.
+# Apache MERGES authorization from parent directories, so without this the
+# whole site would return 403 in that case too. public/ is the served tree and
+# must explicitly allow what its parent forbids.
+<IfModule mod_authz_core.c>
+    Require all granted
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Allow from all
+</IfModule>
+# Prevent directory listing site-wide (same rule admin/.htaccess already uses)
+Options -Indexes
+
+DirectoryIndex index.php
+
+# --- Clean URLs for the 23 public pages -------------------------------
+# Whitelisted by exact page name on purpose: these rules must never touch
+# /admin/, /api/, /uploads/, or any other folder, so each rule only ever
+# matches one of these literal top-level slugs, never a path with a slash
+# in it. admin/ keeps its own .php URLs unchanged.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # No RewriteBase, and no folder name anywhere below. The same file serves
+    # the live site at / (forwarded here by public_html/.htaccess) and XAMPP
+    # at /WEF/..., so nothing may assume where public/ is mounted. Internal
+    # rewrites are relative and need no base. The 301s take the visitor's
+    # folder from %{THE_REQUEST} - the browser's own request line, which no
+    # internal forward changes - so /about.php redirects to /about on the
+    # live site and /WEF/about.php to /WEF/about locally.
+
+    # 0) Force HTTPS in production.
+    #
+    #    Three conditions, each load-bearing:
+    #      - %{HTTPS} off        : only redirect plain HTTP.
+    #      - X-Forwarded-Proto   : Hostinger (like most shared hosts) may
+    #                              terminate TLS at a proxy and forward over
+    #                              HTTP with %{HTTPS} unset. Without this the
+    #                              rule would redirect forever.
+    #      - HTTP_HOST not local : XAMPP serves this over http://localhost/WEF/
+    #                              and has no certificate, so redirecting local
+    #                              development would break it outright.
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+    RewriteCond %{HTTP_HOST} !^localhost [NC]
+    RewriteCond %{HTTP_HOST} !^127\.0\.0\.1 [NC]
+    RewriteCond %{HTTP_HOST} !\.local$ [NC]
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+    # 0) /public/... typed or linked directly on the live site -> the same
+    #    address without /public/. Only reachable when public_html/.htaccess
+    #    forwards into this folder, and it must never become a second copy of
+    #    every page. Anchored at the start of the request line, so a local
+    #    /WEF/public/... URL is left alone. GET/HEAD only: a 301 turns a form
+    #    POST into a GET and would lose it.
+    RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+    RewriteCond %{THE_REQUEST} ^[A-Z]+\s/public/(\S*)\s
+    RewriteRule ^ /%1 [R=301,L,NE]
+
+    # 0) Removed pages -> 301 to where their content lives now, so old links
+    #    and search results land somewhere useful instead of a 404.
+    #    /early-childhood (and .php) was a hub duplicating Our Active Projects.
+    RewriteCond %{THE_REQUEST} ^[A-Z]+\s([^?\s]*/)early-childhood [NC]
+    RewriteRule ^early-childhood(?:\.php)?/?$ %1active-projects [R=301,L,NC]
+    #    /scholarships (and .php) listed the two scholarship projects, which
+    #    Our Active Projects already shows.
+    RewriteCond %{THE_REQUEST} ^[A-Z]+\s([^?\s]*/)scholarships [NC]
+    RewriteRule ^scholarships(?:\.php)?/?$ %1active-projects [R=301,L,NC]
+
+    # 1) /page.php or /page.html  ->  301  ->  /page
+    #
+    #    The pattern deliberately contains no slash, so it can only ever match
+    #    a file sitting directly in this folder. That is what keeps admin/ and
+    #    api/ out of it: "admin/login.php" has a slash and simply does not
+    #    match, so no rule is needed to exclude them by name.
+    #
+    #    The condition fires only when the browser itself asked for this very
+    #    file with its extension: "$1::" is the file matched by the rule, and
+    #    \1 requires the request line to name it. That stops a loop with rule
+    #    2 below (whose internal rewrite to page.php leaves THE_REQUEST as the
+    #    extensionless /page) and keeps the 404 fallback's internal 404.php
+    #    from redirecting. It used to test REDIRECT_STATUS instead, which is
+    #    never empty once public_html/.htaccess has forwarded the request, so
+    #    on Hostinger the rule would never have fired. %2 is the visitor's
+    #    folder: / live, /WEF/ locally.
+    #
+    #    index is excluded so the homepage keeps being served at / and
+    #    /index.php rather than gaining a second /index URL.
+    RewriteCond $1::%{THE_REQUEST} ^([a-z0-9-]+)::[A-Z]+\s([^?\s]*/)\1\.(?:php|html)[?\s]
+    RewriteRule ^(?!index\.)([a-z0-9-]+)\.(?:php|html)$ %2%1 [R=301,L]
+
+    # 2) /page  ->  served internally by page.php, address bar unchanged.
+    #
+    #    Guarded on the target actually existing, so an unknown slug still
+    #    produces a normal 404 instead of a rewrite to a missing file.
+    #
+    #    This replaces a hand-maintained alternation of 22 page slugs that was
+    #    written out twice in this file and a third time in sitemap.xml.
+    #    Adding a page meant editing all three and silently 404ing if you
+    #    missed one; now a new .php file in this folder is routable the moment
+    #    it exists. %{REQUEST_FILENAME} is an absolute filesystem path, so this
+    #    keeps working unchanged when the site moves from /WEF/ to a domain
+    #    root -- unlike DOCUMENT_ROOT-based variants.
+    #    index is excluded here too, not just from rule 1: without it, /index
+    #    would quietly become a second working URL for the homepage, which
+    #    already answers at / and /index.php. Three URLs for one page is a
+    #    duplicate-content problem search engines have to guess their way out
+    #    of, and it did not exist before this rule generalised.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^(?!index$)([a-z0-9-]+)$ $1.php [L]
+
+    # 3) Serve the WebP twin of any JPEG or PNG to a browser that accepts it.
+    #
+    #    extras/tools/optimize-images.php writes a twin beside every raster source:
+    #
+    #        programs/model-schools-01.jpg
+    #        programs/model-schools-01.jpg.webp     (~50-95% smaller)
+    #
+    #    Nothing in the markup mentions the .webp file. This rule swaps the
+    #    bytes at request time, which is what makes it worth doing at all:
+    #    one rule covers all 98 <img> tags across 24 pages, every srcset
+    #    candidate, every CMS-uploaded photo, and — the part markup cannot
+    #    reach — every background-image in styles.css. A <picture> element
+    #    would have meant editing all of those by hand and would still have
+    #    missed the CSS.
+    #
+    #    Each condition is load-bearing:
+    #      - HTTP_ACCEPT contains image/webp : the browser can display it.
+    #      - the request is for a jpg/jpeg/png: leave everything else alone.
+    #      - the twin exists on disk         : an image added since the last
+    #                                          optimiser run still serves its
+    #                                          original rather than 404ing.
+    #
+    #    T=image/webp overrides the Content-Type that Apache would otherwise
+    #    infer from the .jpg in the URL. Without it the browser is handed WebP
+    #    data labelled image/jpeg and shows a broken image.
+    RewriteCond %{HTTP_ACCEPT} image/webp
+    RewriteCond %{REQUEST_FILENAME} \.(jpe?g|png)$ [NC]
+    RewriteCond %{REQUEST_FILENAME}\.webp -f
+    RewriteRule ^(.+)\.(jpe?g|png)$ $1.$2.webp [T=image/webp,L,NC]
+
+    # 4) Anything that does not exist -> the site's styled 404 page.
+    #
+    #    This used to be `ErrorDocument 404 /WEF/public/404.php`. ErrorDocument
+    #    takes a URL path, so it was wrong everywhere except that one XAMPP
+    #    folder, and on the live domain every dead link would have shown
+    #    Apache's bare default. A relative rewrite has no path to get wrong.
+    #    404.php sends the 404 status itself. Missing images, scripts and
+    #    other files are left to the server's short default, not a whole
+    #    rendered page.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !\.(?:css|js|mjs|map|jpe?g|png|gif|webp|avif|svg|ico|woff2?|ttf|otf|pdf|txt|xml|json|geojson|mp4|webm)$ [NC]
+    RewriteRule ^ 404.php [L]
+
+</IfModule>
+
+# Two URLs now answer with different bytes depending on a request header, so
+# every cache between here and the visitor has to be told which header. Without
+# Vary: Accept a shared proxy that cached the WebP response for one visitor
+# will hand that WebP to the next one whose browser cannot read it — a broken
+# image the site's own logs would never show.
+#
+# Scoped to the image extensions the rule above can rewrite. Vary on everything
+# would needlessly fragment the cache for HTML and CSS, which do not negotiate.
+<IfModule mod_headers.c>
+    <FilesMatch "\.(jpe?g|png)$">
+        Header append Vary Accept
+    </FilesMatch>
+</IfModule>
+
+# Some shared hosts do not have image/webp in mime.types, and a WebP served as
+# application/octet-stream is downloaded rather than displayed.
+<IfModule mod_mime.c>
+    AddType image/webp .webp
+    AddType font/woff2 .woff2
+</IfModule>
+
+# --- Error pages ------------------------------------------------------
+# includes/layout/not-found.php has rendered a proper WEF-styled 404 for a
+# while, and nothing was pointing Apache at it â€” a dead link produced Apache's
+# own 295-byte default with no styling and no way back into the site. 404.php
+# is the entry point that connects them - through rule 4 in the rewrite block
+# above rather than ErrorDocument, which needs the mount path spelled out.
+
+# --- Compression ------------------------------------------------------
+# Nothing was compressed before this. css/styles.css alone was going over the
+# wire at 162 KB; gzip takes it to roughly a sixth of that, which on a phone in
+# Chitral is the difference between a page that loads and one that does not.
+#
+# Only text formats are listed. Images, PDFs, WebP and the .gz backups are
+# already compressed â€” running deflate over them costs CPU and returns nothing.
+# Brotli first. Where the module is available it beats gzip by roughly a
+# further 15-20% on this site's text — styles.css goes to about 25 KB against
+# gzip's 31 KB — and every browser that supports WebP also supports Brotli, so
+# in practice the same visitors benefit from both. Apache applies only one
+# encoding filter, and picks Brotli when the client's Accept-Encoding offers
+# it, so the mod_deflate block below is the fallback rather than a duplicate.
+<IfModule mod_brotli.c>
+    AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/xml text/css
+    AddOutputFilterByType BROTLI_COMPRESS application/javascript application/x-javascript text/javascript
+    AddOutputFilterByType BROTLI_COMPRESS application/json application/ld+json
+    AddOutputFilterByType BROTLI_COMPRESS image/svg+xml application/rss+xml
+    AddOutputFilterByType BROTLI_COMPRESS application/geo+json
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+    AddOutputFilterByType DEFLATE application/javascript application/x-javascript text/javascript
+    AddOutputFilterByType DEFLATE application/json application/ld+json
+    AddOutputFilterByType DEFLATE image/svg+xml application/rss+xml
+    AddOutputFilterByType DEFLATE application/geo+json
+
+    # Vary: Accept-Encoding so a shared proxy cannot hand a gzipped response to
+    # a client that did not ask for one.
+    <IfModule mod_headers.c>
+        Header append Vary Accept-Encoding
+    </IfModule>
+</IfModule>
+
+# woff2 is already Brotli-compressed internally; running a compressor over it
+# again costs CPU on every request and makes the file marginally larger. The
+# same is true of the WebP, JPEG and PNG files, which is why no image type
+# appears in either list above apart from SVG (which is XML, and compresses).
+#
+# The filters above are type-based and already exclude these, so this is a
+# belt-and-braces guard for hosts that enable compression globally in the
+# server config where this file cannot see it.
+<IfModule mod_setenvif.c>
+    SetEnvIfNoCase Request_URI "\.(?:woff2?|webp|jpe?g|png|gif|ico|pdf|zip|gz)$" no-gzip dont-vary
+</IfModule>
+
+# --- Static asset caching ---------------------------------------------
+# Repeat visitors were re-downloading every image on every page view: no
+# Cache-Control and no Expires meant the browser had to revalidate everything.
+#
+# The long lifetimes are safe because of how this site references assets:
+# stylesheets and scripts are versioned in the URL (styles.css?v=4.3), so a
+# change ships under a new URL and the cached copy is never the stale one. Bump
+# that version when editing CSS or JS â€” that is what makes a year safe here.
+#
+# HTML is deliberately NOT cached long. Pages are database-driven and a CMS
+# edit has to be visible immediately, so it revalidates every time.
+<IfModule mod_expires.c>
+    ExpiresActive On
+
+    ExpiresByType text/css                  "access plus 1 year"
+    ExpiresByType application/javascript    "access plus 1 year"
+    ExpiresByType text/javascript           "access plus 1 year"
+
+    ExpiresByType image/jpeg                "access plus 6 months"
+    ExpiresByType image/png                 "access plus 6 months"
+    ExpiresByType image/webp                "access plus 6 months"
+    ExpiresByType image/svg+xml             "access plus 6 months"
+    ExpiresByType image/x-icon              "access plus 6 months"
+    ExpiresByType image/vnd.microsoft.icon  "access plus 6 months"
+
+    ExpiresByType font/woff2                "access plus 1 year"
+    ExpiresByType font/woff                 "access plus 1 year"
+
+    ExpiresByType application/pdf           "access plus 1 month"
+    ExpiresByType application/geo+json      "access plus 1 week"
+
+    ExpiresByType text/html                 "access plus 0 seconds"
+</IfModule>
+
+<IfModule mod_headers.c>
+    # immutable tells the browser not to revalidate at all during the lifetime
+    # above â€” the strongest possible cache hit, and correct precisely because
+    # these URLs carry a version string.
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    <FilesMatch "\.(jpg|jpeg|png|webp|gif|svg|ico)$">
+        Header set Cache-Control "public, max-age=15552000"
+    </FilesMatch>
+
+    # Uploads are served from admin/uploads/ under content-hashed filenames, so
+    # replacing an image produces a new URL and this can be cached hard too.
+    <FilesMatch "\.(woff2?|ttf|eot)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    # A page is never cacheable: it may show CMS content edited a moment ago.
+    <FilesMatch "\.php$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+</IfModule>
+
+# --- Security headers (public site) -----------------------------------
+# Sent from here rather than from <meta> tags because two of the most
+# important protections cannot be expressed in a meta tag at all:
+# X-Frame-Options, and CSP's frame-ancestors. Until now the public pages had
+# a <meta> CSP and the admin app had no headers whatsoever, which left both
+# tiers framable â€” i.e. clickjackable.
+#
+# The <meta> CSP in includes/layout/head-meta.php is deliberately kept as a
+# fallback for hosting that ignores .htaccess (e.g. nginx without Apache rules).
+# When both are present the browser enforces the intersection, so the source
+# lists below are kept identical to that meta tag on purpose â€” if you edit one,
+# edit both, or the intersection will start blocking things silently.
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set X-Permitted-Cross-Domain-Policies "none"
+    Header always set Cross-Origin-Opener-Policy "same-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), accelerometer=()"
+
+    # Same source lists as the meta tag, plus the three directives a meta tag
+    # cannot carry: frame-ancestors, base-uri, form-action.
+    #
+    # Note on third-party scripts: script-src permits 'self' and unpkg.com
+    # only. Anything loaded from another origin is blocked silently apart from
+    # a console warning, which is exactly how the annual-reports PDF viewer
+    # broke -- it pulled PDF.js from cdnjs, which is not on this list, so the
+    # library never loaded and the page reported it to visitors as a connection
+    # problem. That page now links straight to the PDFs and needs no library at
+    # all. Before adding any new CDN script, add its origin to BOTH copies of
+    # this policy (here and in includes/layout/head-meta.php); the browser
+    # enforces the intersection, so adding it to only one changes nothing.
+    #
+    # script-src has no 'unsafe-inline': every handler and script block that
+    # needed it was moved into public/js/, and the two inline scripts left in
+    # the <head> are allowed by SHA-256 hash (the constants in
+    # includes/assets.php). An injected <script> or onclick= no longer runs.
+    # If either constant is edited, run extras/tools/csp-hashes.php and paste
+    # its hashes here; the <meta> copy computes its own.
+    # style-src keeps 'unsafe-inline': the pages carry many style="" attributes
+    # (hero background images among them) and the inlined critical CSS, and an
+    # injected style is far less dangerous than an injected script.
+    # font-src is 'self' with no third party in it, and the two Google Fonts
+    # origins are gone from style-src, because the web fonts are now served
+    # from this origin — see extras/tools/fetch-fonts.php. Both copies of the policy
+    # were updated together, as the note above requires.
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'sha256-/x7W7R75k8Roq0WaVRQX9blP4OufE5xbAdzklGxsgpw=' 'sha256-WtY0lHHveNOHWgJ/HUnpAikDSwPY5qrcPpSCV7vu76U=' https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; font-src 'self'; img-src 'self' data: https://unpkg.com https://*.cartocdn.com https://server.arcgisonline.com https://mt1.google.com; connect-src 'self'; frame-src 'self' https://www.youtube.com https://donorbox.org; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+
+    # HSTS only on a request that actually arrived over TLS. Browsers ignore
+    # the header on plain HTTP anyway, and env=HTTPS keeps it off localhost so
+    # a development visit can never pin the dev host to HTTPS for a year.
+    # preload is deliberately NOT included: it is effectively irreversible and
+    # should only be added once HTTPS is confirmed working on the real domain.
+    # Also when TLS ends at a proxy/load balancer in front of Apache (common on
+    # shared hosting): Apache then sees plain HTTP, so env=HTTPS alone meant the
+    # header was never sent. Plain-HTTP localhost still never gets it.
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" "expr=%{HTTPS} == 'on' || %{req:X-Forwarded-Proto} == 'https'"
+
+    # The server version and PHP version are free reconnaissance.
+    Header always unset X-Powered-By
+    Header always unset Server
+
+    # Serve PDFs for reading rather than saving. The annual-reports "View"
+    # links open the browser's own PDF viewer in a new tab, and without an
+    # explicit disposition some browsers and download helpers treat a bare
+    # application/pdf response as a file to save instead.
+    #
+    # This is safe for the "Download" buttons next to them: those are same-
+    # origin <a download> links, and the download attribute takes precedence
+    # over an inline disposition in Chrome, Edge, Firefox and Safari, so they
+    # still save the file. (iOS Safari ignores the download attribute
+    # entirely and opens the PDF instead -- longstanding platform behaviour,
+    # not caused by this header.)
+    <FilesMatch "\.pdf$">
+        Header always set Content-Disposition "inline"
+    </FilesMatch>
+</IfModule>
+
+# --- Version-control metadata -----------------------------------------
+# CRITICAL FIX. The <FilesMatch "^\."> rule below looks like it covers .git,
+# and does not: FilesMatch matches FILES, and the file .git/config is named
+# "config" with no leading dot. The directory name never enters the match.
+#
+# Verified before this rule existed: /.git/config, /.git/index (22 KB, every
+# filename and blob SHA), /.git/logs/HEAD (full commit history), and loose
+# objects under /.git/objects/ all returned HTTP 200. That is enough for
+# git-dumper to reconstruct the entire source tree in about a minute.
+#
+# RedirectMatch rather than <DirectoryMatch>, because DirectoryMatch is a
+# server-config directive and is rejected inside .htaccess. 404 rather than
+# 403 so the response does not confirm that the directory exists.
+#
+# The pattern covers every path segment, not just the root, so a nested
+# repository (admin/.git, a vendored module) is caught too.
+<IfModule mod_alias.c>
+    RedirectMatch 404 (?i)/\.(git|svn|hg|bzr|idea|vscode)(/|$)
+</IfModule>
+
+# Fallback for hosts without mod_alias. mod_rewrite is already required by the
+# clean-URL rules above, so between the two this is covered everywhere the
+# site can run at all.
+<IfModule !mod_alias.c>
+    <IfModule mod_rewrite.c>
+        RewriteEngine On
+        RewriteRule (?i)(^|/)\.(git|svn|hg|bzr|idea|vscode)(/|$) - [R=404,L]
+    </IfModule>
+</IfModule>
+
+# Block direct access to dotfiles (.gitignore, .env, .htaccess itself, etc.)
+# Kept as-is: it still does useful work for dot-NAMED files. The rule above is
+# what handles dot-named DIRECTORIES.
+<FilesMatch "^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# --- Never serve source, backups or dev tooling -----------------------
+# The dotfile rule above only covers files whose name *starts* with a dot, so
+# 79 development artifacts in this folder â€” index.html.bak (the full previous
+# site source), one-off .py/.ps1 recovery scripts, planner .txt dumps and
+# reconstruct_*.css â€” were all being served as plain text to anyone who asked.
+# They have been moved out of the project; this makes their return harmless.
+# Kept as an extension deny-list rather than a filename one so a new scratch
+# file cannot reintroduce the problem by picking a different name.
+<FilesMatch "\.(bak|orig|rej|tmp|swp|sql|log|py|ps1|sh|md|ini|dist|sample|gpkg)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Planner/scratch dumps, matched by name because .txt must stay servable
+# (robots.txt lives in this folder and has to be publicly readable).
+<FilesMatch "^(dump_|reconstruct_|scratch|temp_|recovered|last_glance)">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>

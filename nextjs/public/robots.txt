@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /config/
+Disallow: /includes/
+Disallow: /storage/
+Disallow: /agent/
+Disallow: /extra/
+Disallow: /docs/
+Disallow: /tools/
+
+Sitemap: https://www.worldwideeducationfoundation.org/sitemap.xml

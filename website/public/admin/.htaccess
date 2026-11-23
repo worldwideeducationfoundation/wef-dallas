@@ -1,0 +1,78 @@
+# Prevent directory listing across the whole admin app
+Options -Indexes
+
+# --- Security headers (admin app) -------------------------------------
+# The admin app previously sent no security headers at all — the only header()
+# calls anywhere in admin/ were a Content-Type and a redirect. That left every
+# authenticated page framable, so a hostile site could iframe a live admin page
+# and overlay it to trick a signed-in administrator into clicking through a
+# delete (UI redress / clickjacking). samesite=Strict on the session cookie
+# stops cross-site form posts but does nothing about that.
+#
+# This policy is much stricter than the public one, and can be: the admin app
+# loads no CDN, no web font and no third-party image. Everything it needs is
+# same-origin.
+<IfModule mod_headers.c>
+    # Never framable, by either mechanism — the modern one and the one older
+    # browsers understand.
+    Header always set X-Frame-Options "DENY"
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Do not leak an admin URL (which can contain record ids) to anything the
+    # page links out to.
+    Header always set Referrer-Policy "no-referrer"
+
+    Header always set X-Permitted-Cross-Domain-Policies "none"
+    Header always set Cross-Origin-Opener-Policy "same-origin"
+    Header always set Cross-Origin-Resource-Policy "same-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), accelerometer=()"
+
+    # No 'unsafe-inline' for scripts. The two inline scripts - the dark-theme
+    # switch in includes/layout-header.php and the auto-submit on the Constant
+    # Contact callback page - are allowed by their SHA-256 hash; everything else
+    # is external. Editing either script means regenerating its hash with
+    # extras/tools/csp-hashes.php. style-src keeps 'unsafe-inline' for the
+    # <style> block on the failure page in includes/errors.php and style="".
+    # img-src names two map-tile hosts for the location picker on the Map
+    # Centers form (the same tiles the public map uses); nothing else.
+    # Note there is no external host in this policy at all, and
+    # frame-ancestors 'none' is the header form of X-Frame-Options: DENY.
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'sha256-8NOUQx+3HBtYzl6ZUMbD1MbodgkH/SzJAUKvSkdpWgs=' 'sha256-/TYq6AGFwIR08qntonGLAotwM6kt+8jIDjSQybNdhD0='; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.basemaps.cartocdn.com https://server.arcgisonline.com; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'; frame-ancestors 'none'"
+
+    # Same reasoning as the public site: only meaningful over TLS, and env=HTTPS
+    # keeps it away from localhost.
+    # Also when TLS ends at a proxy/load balancer in front of Apache (common on
+    # shared hosting): Apache then sees plain HTTP, so env=HTTPS alone meant the
+    # header was never sent. Plain-HTTP localhost still never gets it.
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" "expr=%{HTTPS} == 'on' || %{req:X-Forwarded-Proto} == 'https'"
+
+    Header always unset X-Powered-By
+    Header always unset Server
+</IfModule>
+
+# Keep authenticated pages out of the browser cache and out of any shared
+# proxy cache. Without this, signing out and pressing Back can redisplay a
+# page rendered for the previous session straight from cache.
+#
+# Scoped to .php so it does not defeat caching of admin/assets/ CSS and JS,
+# and does not apply to admin/uploads/, which is public static content served
+# through the site.
+<FilesMatch "\.php$">
+    <IfModule mod_headers.c>
+        Header always set Cache-Control "no-store, no-cache, must-revalidate, private"
+        Header always set Pragma "no-cache"
+        Header always set Expires "0"
+    </IfModule>
+</FilesMatch>
+
+# Include-only files (modules/*/_helpers.php) define functions for the pages
+# that require them and are never an entry point; refuse direct requests.
+<FilesMatch "^_.*\.php$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>

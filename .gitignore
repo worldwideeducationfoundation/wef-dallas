@@ -1,0 +1,66 @@
+# --- Secrets -----------------------------------------------------------
+# Real DB credentials and API secrets - copy config.sample.php to create it
+website/config/config.php
+
+# --- Logs --------------------------------------------------------------
+# Runtime logs: useful on the server, never useful in history.
+website/public/admin/logs/*.log
+website/storage/logs/*.log
+
+# --- Private uploads ---------------------------------------------------
+# Visitor-submitted files (future applications). Content, not code.
+website/storage/applications/*
+!website/storage/applications/.gitkeep
+
+# --- Backups -----------------------------------------------------------
+# Full database dumps (admin password hashes, every form submission). They
+# must never be committed again: see extras/old-db-backups/README.md.
+website/storage/backups/*
+!website/storage/backups/.gitkeep
+
+# --- Deployment output -------------------------------------------------
+# The zip and the database export made by extras/tools/build-deploy.ps1.
+# Both carry the live config and the whole database.
+extras/deploy/
+
+# NOTE: admin/uploads/ is deliberately NOT ignored. It holds the only copy of
+# every team photo, programme image and gallery asset an admin has uploaded,
+# and there is currently no other backup. Tracking it makes git the safety net
+# until a real backup job exists. Revisit once nightly mysqldump + upload
+# archiving is running.
+
+# --- Development scratch -----------------------------------------------
+# These patterns exist because 79 one-off recovery scripts, planner dumps and
+# .bak files accumulated in the web root and were being served to the public.
+# The .htaccess blocks them from being downloaded; this keeps them out of the
+# repository too. Durable tooling belongs in tools/.
+*.bak
+*.orig
+*.rej
+*.tmp
+scratch*
+temp_*
+dump_*
+reconstruct_*
+recovered.*
+last_glance.*
+fix[0-9]*.ps1
+clean_mojibake*.py
+
+# --- OS / editor cruft -------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.idea/
+.vscode/
+
+# --- AI tooling artifacts -----------------------------------------------
+# Global CLI skills installed via `npx skills add` and the graphify code-graph
+# tool. Machine-local tooling, not project source.
+.claude/skills/
+.agents/skills/
+skills-lock.json
+graphify-out/
+extras/old-db-backups/*.gz

@@ -1,0 +1,128 @@
+{
+    "currency": "usd",
+    "org": {
+        "legalName": "Worldwide Education Foundation",
+        "shortName": "WEF",
+        "ein": "81-2135633",
+        "overheadNote": "100% of the dollars raised go to the implementation, operation and maintenance of WEF projects. Administrative expenses are paid by the Founders, through the Connie and Kamal Daya Gift Fund of the Dallas Foundation.",
+        "contactEmail": "info@wefdallas.org",
+        "phone": "+1 (214) 502-8388",
+        "mailingAddress": [
+            "W159N4940 Graysland Drive",
+            "Menomonee Falls, WI 53051"
+        ]
+    },
+    "impact": [
+        {
+            "value": "$2,400",
+            "label": "equips one learning center"
+        },
+        {
+            "value": "~300",
+            "label": "children per center over ten years"
+        },
+        {
+            "value": "$8",
+            "label": "per child"
+        }
+    ],
+    "custom": {
+        "minCents": 100,
+        "maxCents": 1000000,
+        "presetsCents": [
+            2500,
+            5000,
+            10000,
+            25000
+        ]
+    },
+    "maxCenters": 20,
+    "center": {
+        "name": "Bright Beginnings Center Start-Up",
+        "place": "Early Childhood Learning Centers, Chitral, Pakistan",
+        "priceCents": 240000,
+        "plans": [
+            {
+                "id": "lump",
+                "label": "One-time",
+                "perPaymentCents": 240000,
+                "installments": 1
+            },
+            {
+                "id": "monthly12",
+                "label": "Monthly for 12 months",
+                "perPaymentCents": 20000,
+                "installments": 12
+            },
+            {
+                "id": "monthly24",
+                "label": "Monthly for 24 months",
+                "perPaymentCents": 10000,
+                "installments": 24
+            }
+        ]
+    },
+    "centerParts": [
+        {
+            "id": "montessori",
+            "label": "Montessori materials",
+            "priceCents": 80000,
+            "about": "Hands-on learning materials for the classroom."
+        },
+        {
+            "id": "furniture",
+            "label": "Furniture and carpet",
+            "priceCents": 80000,
+            "about": "Child-sized tables, chairs, shelves and a carpet to learn on."
+        },
+        {
+            "id": "technology",
+            "label": "Technology",
+            "priceCents": 50000,
+            "about": "A Smart TV and learning technology."
+        },
+        {
+            "id": "teachers",
+            "label": "Teacher training",
+            "priceCents": 20000,
+            "about": "Training for the center's teacher."
+        },
+        {
+            "id": "transport",
+            "label": "Transportation",
+            "priceCents": 10000,
+            "about": "Getting everything to the village."
+        }
+    ],
+    "scholarships": {
+        "showComingSoonCard": false,
+        "comingSoonCopy": "Scholarships for students in Chitral are coming soon.",
+        "programs": [
+            {
+                "id": "herzing",
+                "label": "Herzing College diploma scholarship",
+                "priceCents": 120000,
+                "unit": "student",
+                "enabled": false
+            },
+            {
+                "id": "bright-beginnings",
+                "label": "Bright Beginnings scholarship",
+                "priceCents": null,
+                "unit": "child",
+                "enabled": false
+            },
+            {
+                "id": "secondary",
+                "label": "Secondary school scholarships",
+                "priceCents": null,
+                "unit": "student",
+                "enabled": false
+            }
+        ]
+    },
+    "legal": {
+        "noGoodsOrServices": "No goods or services were provided in exchange for this contribution."
+    },
+    "invoiceForOneTimeGifts": true
+}

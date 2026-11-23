@@ -1,0 +1,21 @@
+# Scope for graphify (knowledge-graph tool). Gitignore syntax; read on top of
+# .gitignore, so it can only exclude MORE, never re-include anything.
+#
+# The graph is meant to describe the codebase and its documentation. These
+# patterns remove what would duplicate or drown that signal.
+
+# Images: photos, WebP twins and width variants from tools/optimize-images.php,
+# icons. No structure to extract, and each one would cost its own vision pass.
+*.webp
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.svg
+public/admin/uploads/
+
+# Annual-report PDFs: programme content rather than code or architecture.
+*.pdf
+
+# One-off scratch diffs.
+extras/*.txt

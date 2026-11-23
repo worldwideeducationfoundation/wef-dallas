@@ -1,0 +1,33 @@
+# Locks in the conventions this codebase already follows, so a second editor
+# or a second developer does not quietly reformat files and bury real changes
+# in whitespace diffs. Nothing here changes existing files — it describes them.
+#
+# Line endings are CRLF because that is what the existing pages and partials
+# use (XAMPP on Windows). Consistency matters more than the choice: mixed
+# endings inside one file make diffs unreadable.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 2
+
+[*.php]
+indent_size = 4
+
+[*.{css,js,html,json,xml,svg}]
+indent_size = 2
+
+[*.md]
+# Trailing spaces are meaningful in Markdown (hard line break).
+trim_trailing_whitespace = false
+
+[*.{sql,sample}]
+indent_size = 2
+
+[Makefile]
+indent_style = tab

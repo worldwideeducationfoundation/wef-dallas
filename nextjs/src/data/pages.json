@@ -1,0 +1,51 @@
+{
+    "switchable": {
+        "our-team": "Our Team",
+        "our-mission": "Our Mission",
+        "success-stories": "Success Stories",
+        "impact-goals": "Impact Goals",
+        "annual-reports": "Annual Reports",
+        "active-projects": "Active Projects",
+        "completed-projects": "Completed Projects",
+        "gallery": "Photo Gallery",
+        "video-gallery": "Video Gallery",
+        "contact": "Contact (Get in Touch)",
+        "volunteer": "Volunteer",
+        "donate": "Donate"
+    },
+    "followers": {
+        "completed-project-details": "completed-projects"
+    },
+    "programHubs": {
+        "active-projects": {
+            "href": "active-projects",
+            "label": "All Projects"
+        },
+        "completed-projects": {
+            "href": "completed-projects",
+            "label": "Completed Projects"
+        }
+    },
+    "programJourney": [
+        "bright-beginnings",
+        "learning-centers",
+        "model-schools",
+        "language-labs",
+        "teacher-training",
+        "research-hub",
+        "secondary-scholarships",
+        "rising-stars",
+        "skills-development"
+    ],
+    "programJourneyFallbackNames": {
+        "bright-beginnings": "Bright Beginnings: Early Childhood Learning Centers",
+        "learning-centers": "Government School Learning Centers",
+        "model-schools": "Government Model Schools",
+        "language-labs": "In-School Language Labs",
+        "teacher-training": "Teachers' Training Program",
+        "research-hub": "Herzing-Daya Research and Learning Hub",
+        "secondary-scholarships": "Secondary School Scholarships",
+        "rising-stars": "AM Rising Stars Undergraduate Scholarship",
+        "skills-development": "Herzing Center for Skills, Innovation and Entrepreneurship"
+    }
+}

@@ -1,0 +1,237 @@
+{
+    "bright-beginnings": {
+        "slug": "bright-beginnings",
+        "highlight": "Bright Beginnings",
+        "before_after": true,
+        "icon": "assets/icons/SVG/Cart%20Icons/Students.svg",
+        "image_alt": "Bright Beginnings classroom in Chitral",
+        "seo_title": "Bright Beginnings: Early Childhood Learning Centers — Worldwide Education Foundation",
+        "seo_description": "Bright Beginnings Early Childhood Learning Centers bring Montessori-based ECD to Chitral, Pakistan, led by trained women entrepreneurs.",
+        "fallback": {
+            "location": "Chitral, Khyber Pakhtunkhwa, Pakistan",
+            "badge": "Active Since 2025",
+            "image": "assets/images/programs/bright-beginnings-01.webp",
+            "stats": [
+                {
+                    "value": "100+",
+                    "label": "Centers launched across Chitral"
+                },
+                {
+                    "value": "3,000",
+                    "label": "Students"
+                },
+                {
+                    "value": "200",
+                    "label": "Women educators trained & leading"
+                }
+            ]
+        }
+    },
+    "language-labs": {
+        "slug": "language-labs",
+        "highlight": "Language Labs",
+        "before_after": true,
+        "icon": "assets/icons/SVG/Cart%20Icons/Lab.svg",
+        "image_alt": "Students in an In-School Language Lab in Chitral",
+        "seo_title": "In-School Language Labs — Worldwide Education Foundation",
+        "seo_description": "High-quality English language labs in low-income private schools across Chitral, strengthening students' speaking and listening skills.",
+        "fallback": {
+            "location": "Low-income Private Schools in Chitral, Khyber Pakhtunkhwa, Pakistan",
+            "badge": "Active Since 2021",
+            "image": "assets/images/programs/language-labs-01.jpg",
+            "stats": [
+                {
+                    "value": "5",
+                    "label": "Language Labs"
+                },
+                {
+                    "value": "1,250",
+                    "label": "Students Enrolled"
+                },
+                {
+                    "value": "100",
+                    "label": "School Teachers"
+                },
+                {
+                    "value": "5",
+                    "label": "Facilitators"
+                }
+            ]
+        }
+    },
+    "learning-centers": {
+        "slug": "learning-centers",
+        "highlight": "Learning Centers",
+        "before_after": true,
+        "icon": "assets/icons/SVG/Cart%20Icons/Schools.svg",
+        "image_alt": "Learning Center classroom in a Chitral government school",
+        "seo_title": "Government School Learning Centers — Worldwide Education Foundation",
+        "seo_description": "Integrating Early Childhood Development and Technology-Assisted English Language Labs into government primary schools across Chitral.",
+        "fallback": {
+            "location": "Chitral, Khyber Pakhtunkhwa, Pakistan",
+            "badge": "Active Since 2024",
+            "image": "assets/images/programs/learning-centers-01.jpg",
+            "stats": [
+                {
+                    "value": "2,000",
+                    "label": "Children Reached"
+                },
+                {
+                    "value": "20",
+                    "label": "Teachers Trained"
+                },
+                {
+                    "value": "10",
+                    "label": "ECD Educators Trained"
+                }
+            ]
+        }
+    },
+    "model-schools": {
+        "slug": "model-schools",
+        "highlight": "Model Schools",
+        "before_after": true,
+        "icon": "assets/icons/SVG/Cart%20Icons/Schools.svg",
+        "image_alt": "Renovated Model School classroom in Upper Chitral",
+        "seo_title": "Government Model Schools — Worldwide Education Foundation",
+        "seo_description": "Transforming government primary school classrooms in Upper Chitral into welcoming, developmentally appropriate learning spaces.",
+        "fallback": {
+            "location": "Chitral, Khyber Pakhtunkhwa, Pakistan",
+            "badge": "Active Since 2025",
+            "image": "assets/images/programs/model-schools-01.jpg",
+            "stats": [
+                {
+                    "value": "10",
+                    "label": "Government Primary Schools Renovated"
+                },
+                {
+                    "value": "600",
+                    "label": "More Model Schools by 2035"
+                }
+            ]
+        }
+    },
+    "research-hub": {
+        "slug": "research-hub",
+        "highlight": "Research & Learning Hub",
+        "before_after": false,
+        "icon": "assets/icons/SVG/Cart%20Icons/Research.svg",
+        "image_alt": "Herzing–Daya Research and Learning Hub at University of Chitral",
+        "seo_title": "Herzing–Daya Research & Learning Hub — Worldwide Education Foundation",
+        "seo_description": "Pakistan's first ECD research hub in a remote mountain region, hosted at the University of Chitral and led by WEF.",
+        "fallback": {
+            "location": "Chitral, Khyber Pakhtunkhwa, Pakistan",
+            "badge": "Active Since 2026",
+            "image": "assets/images/programs/research-hub-01.jpg",
+            "stats": [
+                {
+                    "value": "Hosted by",
+                    "label": "University of Chitral"
+                },
+                {
+                    "value": "Led by",
+                    "label": "Worldwide Education Foundation (WEF), USA"
+                },
+                {
+                    "value": "Funded by",
+                    "label": "The Herzing and Daya Families"
+                }
+            ]
+        }
+    },
+    "rising-stars": {
+        "slug": "rising-stars",
+        "highlight": "Rising Stars",
+        "before_after": false,
+        "icon": "assets/icons/SVG/Cart%20Icons/Scholarship.svg",
+        "image_alt": "AM Rising Stars Undergraduate Scholarship recipients at AUCA and UCA",
+        "seo_title": "AM Rising Stars Undergraduate Scholarship — Worldwide Education Foundation",
+        "seo_description": "Removing financial barriers to higher education for talented students from Tajikistan and Kyrgyzstan, funded by Sadiq Ali & Family.",
+        "fallback": {
+            "location": "Bishkek, Kyrgyzstan & Khorog, Tajikistan",
+            "badge": "Active Since 2023",
+            "image": "assets/images/programs/rising-stars-01.jpg",
+            "stats": [
+                {
+                    "value": "52",
+                    "label": "Recipients at AUCA"
+                },
+                {
+                    "value": "14",
+                    "label": "Recipients at UCA"
+                },
+                {
+                    "value": "66",
+                    "label": "Total Students Supported"
+                }
+            ]
+        }
+    },
+    "secondary-scholarships": {
+        "slug": "secondary-scholarships",
+        "highlight": "Secondary School Scholarships",
+        "before_after": false,
+        "icon": "assets/icons/SVG/Cart%20Icons/Scholarship.svg",
+        "image_alt": "Secondary School Scholarship recipients in Upper Chitral",
+        "seo_title": "Secondary School Scholarships — Worldwide Education Foundation",
+        "seo_description": "Investing in Young Futures: removing financial barriers for underserved students in Upper Chitral to continue their education beyond Grade 8.",
+        "fallback": {
+            "location": "Chitral Upper, Khyber-Pakhtunkhwa, Pakistan.",
+            "badge": "Active Since 2025",
+            "image": "assets/images/programs/secondary-scholarships-01.jpg",
+            "stats": [
+                {
+                    "value": "115",
+                    "label": "Students Supported"
+                },
+                {
+                    "value": "5",
+                    "label": "Private Schools"
+                }
+            ]
+        }
+    },
+    "skills-development": {
+        "slug": "skills-development",
+        "highlight": "Skills, Innovation and Entrepreneurship",
+        "before_after": true,
+        "icon": "assets/icons/SVG/Cart%20Icons/Diploma.svg",
+        "image_alt": "Herzing Center for Skills, Innovation and Entrepreneurship at University of Chitral",
+        "seo_title": "Herzing Center for Skills, Innovation and Entrepreneurship — Worldwide Education Foundation",
+        "seo_description": "An integrated platform for professional development, teacher training, and workforce readiness hosted at the University of Chitral.",
+        "fallback": {
+            "location": "Chitral, Khyber Pakhtunkhwa, Pakistan",
+            "badge": "Active Since 2026",
+            "image": "assets/images/programs/skills-development-01.webp",
+            "stats": []
+        }
+    },
+    "teacher-training": {
+        "slug": "teacher-training",
+        "highlight": "Training Program",
+        "before_after": false,
+        "icon": "assets/icons/SVG/Cart%20Icons/Students.svg",
+        "image_alt": "Teachers in a training session in Booni, Chitral",
+        "seo_title": "English Language Skills Training for Teachers — Worldwide Education Foundation",
+        "seo_description": "A TEFL micro-credential certification program for teachers in the remote valley of Booni, Chitral, in partnership with Bridge Education Group.",
+        "fallback": {
+            "location": "Booni Chitral, Khyber Pakhtunkhwa, Pakistan",
+            "badge": "Active since October 2022",
+            "image": "assets/images/programs/teacher-training-01.webp",
+            "stats": [
+                {
+                    "value": "21",
+                    "label": "Teachers Trained (Total)"
+                },
+                {
+                    "value": "08",
+                    "label": "Certified — First Round"
+                },
+                {
+                    "value": "13",
+                    "label": "Currently in Training"
+                }
+            ]
+        }
+    }
+}

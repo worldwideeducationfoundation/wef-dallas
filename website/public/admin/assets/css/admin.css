@@ -1,0 +1,2616 @@
+/* ============================================
+   WEF Admin — Phase 1 (login + dashboard shell)
+   Same brand tokens as the public site (css/styles.css)
+   so the admin doesn't feel like a bolted-on template.
+   ============================================ */
+
+/* DM Sans is self-hosted and linked from the page <head> as fonts.css,
+   alongside this file — see tools/fetch-fonts.php.
+
+   It used to be an @import on this line, which is the slowest way to load a
+   font: an @import is invisible to the browser's preload scanner, so the fonts
+   were only discovered after this stylesheet had been downloaded and parsed,
+   and then needed two more serial round trips to two third-party origins.
+   Do not reintroduce an @import here. */
+
+:root {
+  --clr-primary: #1C1917;
+  --clr-primary-dark: #000000;
+  --clr-primary-deeper: #0C0A09;
+  --clr-primary-light: #44403C;
+  --clr-primary-lighter: #FAFAF9;
+  --clr-accent: #A16207;
+  --clr-error: #DC2626;
+  --clr-error-subtle: #FEF2F2;
+  --clr-white: #FFFFFF;
+  --clr-off-white: #FAFAF9;
+  --clr-gray-100: #F5F5F4;
+  --clr-gray-200: #E8ECF0;
+  --clr-gray-300: #D6D3D1;
+  --clr-gray-400: #A8A29E;
+  --clr-gray-500: #78716C;
+  --clr-gray-600: #57534E;
+  --clr-gray-700: #44403C;
+  --clr-gray-900: #1C1917;
+  --ff-heading: 'DM Sans', sans-serif;
+  --ff-body: 'DM Sans', sans-serif;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 4px 12px rgba(28, 25, 23, 0.04);
+  --shadow-md: 0 12px 32px rgba(28, 25, 23, 0.08), 0 4px 12px rgba(28, 25, 23, 0.04);
+  --shadow-lg: 0 24px 64px rgba(28, 25, 23, 0.12), 0 8px 24px rgba(28, 25, 23, 0.06);
+  --ease-smooth: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+[data-theme="dark"] {
+  --clr-white: #1C1917;
+  --clr-off-white: #0C0A09;
+  --clr-primary: #FFFFFF;
+  --clr-primary-dark: #FAFAF9;
+  --clr-primary-deeper: #F5F5F4;
+  --clr-primary-light: #D6D3D1;
+  --clr-primary-lighter: #1C1917;
+  --clr-gray-100: #292524;
+  --clr-gray-200: #44403C;
+  --clr-gray-300: #57534E;
+  --clr-gray-400: #78716C;
+  --clr-gray-500: #A8A29E;
+  --clr-gray-600: #D6D3D1;
+  --clr-gray-700: #E8ECF0;
+  --clr-gray-900: #FAFAF9;
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.8), 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--ff-body);
+  color: var(--clr-gray-700);
+  background: var(--clr-off-white);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--clr-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* --- Login --- */
+.login-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(160deg, var(--clr-primary-deeper) 0%, var(--clr-primary-dark) 55%, var(--clr-primary) 100%);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--clr-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 40px 36px;
+}
+
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.login-brand-logo {
+  margin-bottom: 6px;
+  border-radius: 50%;
+  padding: 8px;
+  background: var(--clr-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.login-brand h1 {
+  font-family: var(--ff-heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--clr-gray-900);
+}
+
+.login-brand p {
+  font-size: 13px;
+  color: var(--clr-gray-500);
+}
+
+.field {
+  margin-bottom: 18px;
+}
+
+/* Notched label (adapted from a Uiverse.io community input by
+   kamehame-ha) — matches the same treatment on the public site's forms.
+   .field input's background never changes on focus here (unlike the
+   public site's), so the label's background can stay a flat
+   --clr-white match with no :focus-within sync needed. */
+.field label {
+  display: inline-block;
+  position: relative;
+  top: 0.7rem;
+  left: 12px;
+  margin: 0;
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--clr-primary);
+  background: linear-gradient(180deg, var(--clr-white) 55%, transparent 55%);
+  width: fit-content;
+  z-index: 1;
+}
+
+.field input {
+  width: 100%;
+  padding: 11px 14px;
+  font-size: 14px;
+  font-family: var(--ff-body);
+  color: var(--clr-gray-900);
+  background: var(--clr-white);
+  border: 1px solid var(--clr-gray-300);
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--clr-primary);
+  box-shadow: 0 0 0 3px rgba(14, 97, 29, 0.12);
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  font-family: var(--ff-heading);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--clr-white);
+  background: var(--clr-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.btn-submit:hover {
+  background: var(--clr-primary-dark);
+  transform: translateY(-1px);
+}
+
+.btn-submit:active {
+  transform: translateY(0);
+}
+
+.alert {
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+
+.alert-error {
+  background: var(--clr-error-subtle);
+  color: var(--clr-error);
+  border: 1px solid rgba(224, 36, 36, 0.2);
+}
+
+.alert-success {
+  background: var(--clr-primary-lighter);
+  color: var(--clr-primary-dark);
+  border: 1px solid rgba(14, 97, 29, 0.15);
+}
+
+.login-footnote {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--clr-gray-400);
+}
+
+/* --- App shell (dashboard) --- */
+.app-shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+}
+
+.app-sidebar {
+  background: var(--clr-primary-deeper);
+  color: rgba(255, 255, 255, 0.85);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px 24px;
+  color: var(--clr-white);
+  font-family: var(--ff-heading);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.app-sidebar-brand-logo {
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  padding: 4px;
+}
+
+.app-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.app-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.app-nav-item.is-active {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--clr-white);
+  font-weight: 600;
+}
+
+.app-nav-item.is-disabled {
+  color: rgba(255, 255, 255, 0.35);
+  cursor: default;
+}
+
+.app-nav-soon {
+  margin-left: auto;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+}
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 16px 32px;
+  background: var(--clr-white);
+  border-bottom: 1px solid var(--clr-gray-200);
+}
+
+/* Now an <a> to account.php rather than a plain block, so it needs the link
+   defaults reset and a visible affordance on hover/focus. The focus ring is
+   not optional: this is a keyboard user's route to their own password. */
+.app-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: inherit;
+  text-decoration: none;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  border-radius: 8px;
+  transition: background-color var(--duration-base, .2s) ease;
+}
+
+.app-user:hover {
+  background: var(--clr-primary-lighter);
+}
+
+.app-user:focus-visible {
+  outline: 2px solid var(--clr-primary);
+  outline-offset: 2px;
+}
+
+.app-user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--clr-primary-lighter);
+  color: var(--clr-primary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.app-user-name {
+  font-weight: 600;
+  color: var(--clr-gray-900);
+}
+
+.app-user-role {
+  color: var(--clr-gray-500);
+  font-size: 12px;
+}
+
+.btn-logout {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--clr-gray-600);
+  background: var(--clr-gray-100);
+  border: 1px solid var(--clr-gray-200);
+  border-radius: var(--radius-md);
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: var(--clr-error-subtle);
+  color: var(--clr-error);
+  border-color: rgba(224, 36, 36, 0.2);
+}
+
+.app-content {
+  padding: 32px;
+  flex: 1;
+}
+
+.welcome-card {
+  background: var(--clr-white);
+  border: 1px solid var(--clr-gray-200);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 24px;
+}
+
+.welcome-card h2 {
+  font-family: var(--ff-heading);
+  font-size: 20px;
+  color: var(--clr-gray-900);
+  margin-bottom: 6px;
+}
+
+.welcome-card p {
+  color: var(--clr-gray-500);
+  font-size: 14px;
+}
+
+.phase-note {
+  background: var(--clr-primary-lighter);
+  color: var(--clr-primary-dark);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .app-sidebar {
+    display: none;
+  }
+
+  .app-shell.nav-open .app-sidebar {
+    display: flex;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 260px;
+    z-index: 1000;
+  }
+
+  .app-sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(28, 25, 23, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+  }
+}
+
+/* --- Module list/table (Phase 2: Programs, reused by every later module) --- */
+.module-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.module-header h1 {
+  font-family: var(--ff-heading);
+  font-size: 20px;
+  color: var(--clr-gray-900);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--ff-heading);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--clr-white);
+  background: var(--clr-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 9px 16px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.btn-primary:hover {
+  background: var(--clr-primary-dark);
+  transform: translateY(-1px);
+}
+
+.link-back {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--clr-primary);
+  text-decoration: none;
+}
+
+.link-back:hover {
+  color: var(--clr-primary-dark);
+}
+
+.empty-state {
+  background: var(--clr-white);
+  border: 1px dashed var(--clr-gray-300);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  text-align: center;
+  color: var(--clr-gray-500);
+  font-size: 14px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--clr-white);
+  border: 1px solid var(--clr-gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.data-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--clr-gray-500);
+  background: var(--clr-gray-100);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--clr-gray-200);
+}
+
+.data-table td {
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--clr-gray-700);
+  border-bottom: 1px solid var(--clr-gray-100);
+  vertical-align: middle;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table-primary {
+  font-weight: 600;
+  color: var(--clr-gray-900);
+}
+
+.data-table-secondary {
+  font-size: 12px;
+  color: var(--clr-gray-500);
+  margin-top: 2px;
+}
+
+.data-table-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--clr-gray-100);
+}
+
+.data-table-avatar--empty {
+  color: var(--clr-gray-500);
+  font-family: var(--ff-heading);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.data-table-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  white-space: nowrap;
+}
+
+.data-table-actions form {
+  display: contents;
+}
+
+.link-edit {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--clr-primary);
+  text-decoration: none;
+}
+
+.link-edit:hover {
+  color: var(--clr-primary-dark);
+}
+
+.link-delete {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--clr-error);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+}
+
+.link-delete:hover {
+  text-decoration: underline;
+}
+
+.status-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+}
+
+.status-badge--active {
+  background: var(--clr-primary-lighter);
+  color: var(--clr-primary-dark);
+}
+
+.status-badge--draft {
+  background: var(--clr-gray-100);
+  color: var(--clr-gray-500);
+}
+
+/* --- Content forms (Phase 2: Programs, reused by every later module) --- */
+.admin-form {
+  background: var(--clr-white);
+  border: 1px solid var(--clr-gray-200);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  box-shadow: var(--shadow-md);
+  max-width: 760px;
+}
+
+.admin-form .field {
+  margin-bottom: 18px;
+}
+
+.admin-form textarea {
+  width: 100%;
+  padding: 11px 14px;
+  font-size: 14px;
+  font-family: var(--ff-body);
+  color: var(--clr-gray-900);
+  background: var(--clr-white);
+  border: 1px solid var(--clr-gray-300);
+  border-radius: var(--radius-md);
+  resize: vertical;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.admin-form textarea:focus {
+  outline: none;
+  border-color: var(--clr-primary);
+  box-shadow: 0 0 0 3px rgba(14, 97, 29, 0.12);
+}
+
+.admin-form select {
+  width: 100%;
+  padding: 11px 14px;
+  font-size: 14px;
+  font-family: var(--ff-body);
+  color: var(--clr-gray-900);
+  background: var(--clr-white);
+  border: 1px solid var(--clr-gray-300);
+  border-radius: var(--radius-md);
+}
+
+.admin-form input[type="file"] {
+  width: 100%;
+  font-size: 13px;
+  color: var(--clr-gray-700);
+  padding: 8px 0;
+}
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.form-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+
+.stat-fieldset {
+  border: 1px solid var(--clr-gray-200);
+  border-radius: var(--radius-md);
+  padding: 16px 18px 4px;
+  margin: 0 0 18px;
+}
+
+.stat-fieldset legend {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--clr-gray-500);
+  padding: 0 6px;
+}
+
+.current-image {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.current-image img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--clr-gray-200);
+}
+
+.current-image span {
+  font-size: 12px;
+  color: var(--clr-gray-500);
+}
+
+.form-actions {
+  margin-top: 8px;
+}
+
+.form-actions .btn-submit {
+  width: auto;
+  padding: 11px 28px;
+}
+
+@media (max-width: 640px) {
+
+  .form-row-2,
+  .form-row-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================
+   Shared utilities
+   ============================================ */
+
+/* Visible to screen readers only — used for the labels on the search and
+   filter controls, which are visually identified by their placeholder. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 10px 18px;
+  background: var(--clr-primary);
+  color: var(--clr-white);
+  font-weight: 600;
+  border-radius: 0 0 var(--radius-md) 0;
+}
+
+.skip-link:focus {
+  left: 0;
+}
+
+.alert-notice {
+  background: var(--clr-primary-lighter);
+  color: var(--clr-primary-dark);
+  border: 1px solid rgba(14, 97, 29, 0.15);
+}
+
+/* Wide tables scroll inside their own box instead of pushing the whole
+   page sideways on a phone. */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ============================================
+   List / grid view toggle (admin/includes/listing.php's viewToggle(),
+   admin.js's initViewToggle())
+   ============================================ */
+
+.view-toggle {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  margin-bottom: 14px;
+  background: var(--clr-gray-100);
+  border-radius: var(--radius-md);
+}
+
+.view-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--clr-gray-500);
+  background: transparent;
+  border: none;
+  border-radius: calc(var(--radius-md) - 3px);
+  cursor: pointer;
+  transition: background 0.15s var(--ease-smooth), color 0.15s var(--ease-smooth);
+}
+
+.view-toggle-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.view-toggle-btn:hover {
+  color: var(--clr-gray-900);
+}
+
+.view-toggle-btn[aria-pressed="true"] {
+  color: var(--clr-gray-900);
+  background: var(--clr-white);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Both panels exist in the DOM at once; only one is shown, based on the
+   stored preference applied by initViewToggle(). Before JS runs, the
+   grid panel stays hidden so the page never flashes both at once. */
+.listing-view .view-panel--grid {
+  display: none;
+}
+
+.listing-view[data-active-view="grid"] .view-panel--list {
+  display: none;
+}
+
+.listing-view[data-active-view="grid"] .view-panel--grid {
+  display: block;
+}
+
+.grid-view-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.grid-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--clr-white);
+  border: 1px solid var(--clr-gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.grid-card-select {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+}
+
+.grid-card-media {
+  aspect-ratio: 4 / 3;
+  background: var(--clr-gray-100);
+}
+
+.grid-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.grid-card-media--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--clr-gray-400);
+  font-family: var(--ff-heading);
+  font-weight: 700;
+  font-size: 24px;
+}
+
+.grid-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px 14px;
+  flex: 1;
+}
+
+.grid-card-title {
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--clr-gray-900);
+  line-height: 1.35;
+}
+
+.grid-card-meta {
+  font-size: 12px;
+  color: var(--clr-gray-500);
+}
+
+.grid-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+/* ============================================
+   Dashboard — stat cards + activity feed
+   ============================================ */
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 20px;
+  background: var(--clr-white);
+  border: 1px solid var(--clr-gray-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--clr-primary-light);
+}
+
+.stat-card-value {
+  font-family: var(--ff-heading);
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--clr-primary);
+}
+
+.stat-card-label {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--clr-gray-900);
+}
+
+.stat-card-meta {
+  font-size: 12px;
+  color: var(--clr-gray-500);
+}
+
+.panel {
+  background: var(--clr-white);
+  border: 1px solid var(--clr-gray-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--clr-gray-200);
+}
+
+.panel-header h2 {
+  font-family: var(--ff-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--clr-gray-900);
+}
+
+.activity-feed {
+  list-style: none;
+}
+
+.activity-feed li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 22px;
+  border-bottom: 1px solid var(--clr-gray-100);
+  font-size: 13px;
+}
+
+.activity-feed li:last-child {
+  border-bottom: none;
+}
+
+.activity-feed-text {
+  flex: 1;
+  min-width: 0;
+  color: var(--clr-gray-600);
+}
+
+.activity-feed-text strong {
+  color: var(--clr-gray-900);
+}
+
+.activity-feed-time {
+  flex-shrink: 0;
+  font-size: 12px;
+  color: var(--clr-gray-500);
+}
+
+/* Action badges reuse the status-badge shape from the module tables. */
+.status-badge--create,
+.status-badge--login {
+  background: var(--clr-primary-lighter);
+  color: var(--clr-primary-dark);
+}
+
+.status-badge--update {
+  background: #fdf2e6;
+  color: var(--clr-accent);
+}
+
+.status-badge--delete {
+  background: var(--clr-error-subtle);
+  color: var(--clr-error);
+}
+
+.status-badge--logout {
+  background: var(--clr-gray-100);
+  color: var(--clr-gray-500);
+}
+
+.status-badge--export {
+  background: #fdf2e6;
+  color: var(--clr-accent);
+}
+
+/* ============================================
+   Form Submissions
+   ============================================ */
+
+/* Triage statuses. "New" is the only one that shouts — it is the only one
+   that means someone still has to do something. */
+.status-badge--new {
+  background: var(--clr-error-subtle);
+  color: var(--clr-error);
+}
+
+.status-badge--read {
+  background: #fdf2e6;
+  color: var(--clr-accent);
+}
+
+.status-badge--replied {
+  background: var(--clr-primary-lighter);
+  color: var(--clr-primary-dark);
+}
+
+.status-badge--archived {
+  background: var(--clr-gray-100);
+  color: var(--clr-gray-500);
+}
+
+/* Unread rows carry a left edge as well as their badge: a page of enquiries
+   is scanned down the left margin, and a badge in the fifth column is not
+   where that scan is looking. */
+.data-table tr.is-unread {
+  box-shadow: inset 3px 0 0 var(--clr-error);
+}
+
+.data-table tr.is-unread .data-table-primary {
+  font-weight: 700;
+}
+
+.submission-summary {
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: var(--clr-gray-600);
+}
+
+.submission-excerpt {
+  max-width: 42ch;
+}
+
+/* The nav badge for unread submissions, distinguished from Trash's neutral
+   count — one is a backlog of work, the other is just a bin with things in it. */
+.app-nav-count--alert {
+  background: var(--clr-error);
+  color: #fff;
+}
+
+.submission-detail {
+  display: grid;
+  gap: 20px;
+  max-width: 860px;
+}
+
+.submission-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px 24px;
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--clr-gray-200);
+}
+
+.submission-meta dt {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--clr-gray-500);
+  margin-bottom: 4px;
+}
+
+.submission-meta dd {
+  font-size: 14px;
+  color: var(--clr-gray-900);
+  word-break: break-word;
+}
+
+/* pre-wrap, so the visitor's own paragraphs and line breaks survive — the
+   message is displayed as the characters they typed, never parsed as markup. */
+.submission-message {
+  padding: 22px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--clr-gray-700);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* .admin-form has no heading slot of its own — every other module's form is
+   titled by the page's <h1>. This page has two forms under one title, so the
+   second one needs to say what it is. */
+.admin-form-title {
+  font-family: var(--ff-heading);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--clr-gray-900);
+  margin-bottom: 20px;
+}
+
+.field-hint {
+  margin-top: 6px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--clr-gray-500);
+}
+
+.field-hint code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--clr-gray-100);
+  color: var(--clr-gray-700);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+
+/* Section heading inside the Page Content form. Spaced away from the field
+   above so it reads as the start of a group rather than a label for it. */
+.block-group-title {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--clr-gray-200);
+}
+
+.block-group-title:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+/* Long-form copy is written here, not just tweaked — monospace keeps the
+   "- " and "## " marks at the line start visually aligned, which is the only
+   thing the format depends on. */
+.block-body-input {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.form-actions .btn-filter {
+  margin-left: 10px;
+}
+
+.submission-danger {
+  max-width: 760px;
+  text-align: right;
+}
+
+/* Sits under the triage badge in the list's status column, so a newsletter row
+   shows both where it is in the queue and whether the address actually reached
+   the mailing list. */
+.submission-sync-badge {
+  margin-top: 6px;
+}
+
+/* ============================================
+   Newsletter — Constant Contact connection
+   ============================================ */
+
+/* .panel carries no padding of its own (only .panel-header does), which is
+   right for the dashboard's flush lists but wrong for prose. This is the
+   padded counterpart, used by every panel on the Newsletter screen. */
+.panel-body {
+  padding: 20px 22px;
+}
+
+.panel-body > * + * {
+  margin-top: 14px;
+}
+
+.panel-body p {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--clr-gray-700);
+}
+
+/* The meta grid draws its own bottom rule to separate itself from a message
+   body. Inside a padded panel there is nothing below it to separate from. */
+.panel-body .submission-meta {
+  padding: 0;
+  border-bottom: none;
+}
+
+.panel-body .admin-form,
+.panel-body .form-actions {
+  margin-top: 20px;
+}
+
+/* Setup checklists — one line per value that has to be filled in. Deliberately
+   a real list rather than a paragraph: these are things to tick off. */
+.field-hint-list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: var(--clr-gray-600);
+}
+
+.field-hint-list code {
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--clr-gray-100);
+  color: var(--clr-gray-700);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  word-break: break-all;
+}
+
+/* ============================================
+   List toolbar — search, filters, sorting, pager
+   ============================================ */
+
+.list-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.list-search {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+
+.list-search input {
+  width: 100%;
+  padding: 9px 14px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--clr-gray-900);
+  background: var(--clr-white);
+  border: 1px solid var(--clr-gray-300);
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s var(--ease-smooth);
+}
+
+.list-search input:focus {
+  outline: none;
+  border-color: var(--clr-primary-light);
+  box-shadow: 0 0 0 3px var(--clr-primary-lighter);
+}
+
+.list-filter select {
+  padding: 9px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--clr-gray-900);
+  background: var(--clr-white);
+  border: 1px solid var(--clr-gray-300);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.btn-filter {
+  padding: 9px 18px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--clr-gray-700);
+  background: var(--clr-white);
+  border: 1px solid var(--clr-gray-300);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease-smooth), color 0.2s var(--ease-smooth);
+}
+
+.btn-filter:hover {
+  border-color: var(--clr-primary-light);
+  color: var(--clr-primary-dark);
+}
+
+.list-clear {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--clr-gray-500);
+}
+
+.list-clear:hover {
+  color: var(--clr-error);
+}
+
+.data-table th .list-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: inherit;
+}
+
+.data-table th .list-sort:hover {
+  color: var(--clr-primary-dark);
+}
+
+.data-table th .list-sort.is-active {
+  color: var(--clr-primary);
+}
+
+.list-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--clr-gray-500);
+}
+
+.list-pagination-links {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.list-pagination-links a {
+  font-weight: 600;
+  color: var(--clr-primary);
+}
+
+.list-pagination-links a:hover {
+  color: var(--clr-primary-dark);
+}
+
+.list-pagination-links .is-disabled {
+  color: var(--clr-gray-300);
+}
+
+/* ============================================
+   Mobile navigation
+   Below 720px the sidebar used to be display:none with nothing replacing
+   it, which left phones and small tablets with no way to move between
+   modules at all. It now slides in from a toggle in the topbar.
+   ============================================ */
+
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-right: 12px;
+  background: var(--clr-white);
+  border: 1px solid var(--clr-gray-200);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--clr-gray-700);
+}
+
+.nav-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+.app-sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 20, 23, 0.4);
+  z-index: 39;
+}
+
+@media (max-width: 720px) {
+
+  /* margin-right:auto pushes the toggle to the left edge, since the
+     topbar is justify-content:flex-end for the user block. */
+  .nav-toggle {
+    display: inline-flex;
+    margin-right: auto;
+  }
+
+  .app-sidebar {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    z-index: 40;
+    transform: translateX(-100%);
+    transition: transform 0.25s var(--ease-smooth);
+    overflow-y: auto;
+  }
+
+  .app-shell.nav-open .app-sidebar {
+    transform: translateX(0);
+  }
+
+  .app-shell.nav-open .app-sidebar-backdrop {
+    display: block;
+  }
+
+  .app-topbar {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .app-content {
+    padding: 20px 16px;
+  }
+
+  .list-toolbar>* {
+    flex: 1 1 100%;
+  }
+
+  .list-pagination {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .stat-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+
+  .activity-feed li {
+    flex-wrap: wrap;
+  }
+
+  .activity-feed-time {
+    width: 100%;
+  }
+}
+
+/* ============================================
+   Form feedback — inline errors, upload preview
+   ============================================ */
+
+.field-error {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--clr-error);
+}
+
+.field input[aria-invalid="true"],
+.admin-form textarea[aria-invalid="true"] {
+  border-color: var(--clr-error);
+}
+
+.upload-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 8px;
+  background: var(--clr-gray-100);
+  border-radius: var(--radius-md);
+}
+
+.upload-preview img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--clr-gray-200);
+}
+
+.upload-preview-meta {
+  font-size: 12px;
+  color: var(--clr-gray-600);
+  word-break: break-all;
+}
+
+/* Existing file marked for deletion on save. */
+.current-image.is-marked-for-removal {
+  opacity: 0.45;
+}
+
+.current-image.is-marked-for-removal img {
+  filter: grayscale(1);
+}
+
+.remove-file {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--clr-gray-600);
+  cursor: pointer;
+}
+
+.remove-file input {
+  width: auto;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* ============================================
+   Loading state
+   ============================================ */
+
+.is-loading {
+  position: relative;
+  opacity: 0.75;
+  cursor: progress;
+}
+
+.is-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: 13px;
+  height: 13px;
+  margin-top: -7px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: admin-spin 0.6s linear infinite;
+}
+
+@keyframes admin-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .is-loading::after {
+    animation-duration: 2s;
+  }
+
+  .app-sidebar {
+    transition: none;
+  }
+}
+
+/* ============================================
+   Confirmation dialog
+   Replaces window.confirm() for destructive actions.
+   ============================================ */
+
+.btn-danger {
+  padding: 9px 18px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--clr-white);
+  background: var(--clr-error);
+  border: 1px solid var(--clr-error);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.btn-danger:hover {
+  background: #c31d1d;
+}
+
+.confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(18, 20, 23, 0.45);
+}
+
+.confirm-backdrop[hidden] {
+  display: none;
+}
+
+.confirm-dialog {
+  width: 100%;
+  max-width: 420px;
+  padding: 26px;
+  background: var(--clr-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.confirm-dialog h2 {
+  font-family: var(--ff-heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--clr-gray-900);
+  margin-bottom: 8px;
+}
+
+.confirm-dialog p {
+  font-size: 14px;
+  color: var(--clr-gray-600);
+  margin-bottom: 22px;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ============================================
+   Bulk selection
+   ============================================ */
+
+.data-table .col-check {
+  width: 38px;
+  padding-right: 0;
+  text-align: center;
+}
+
+.data-table .col-check input {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: var(--clr-primary);
+}
+
+.bulk-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 11px 16px;
+  background: var(--clr-primary-lighter);
+  border: 1px solid rgba(14, 97, 29, 0.15);
+  border-radius: var(--radius-md);
+}
+
+.bulk-bar[hidden] {
+  display: none;
+}
+
+.bulk-bar-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--clr-primary-dark);
+}
+
+.bulk-bar select {
+  padding: 7px 12px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--clr-gray-900);
+  background: var(--clr-white);
+  border: 1px solid var(--clr-gray-300);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+/* ============================================
+   Field guidance — size specs + character counters
+   ============================================ */
+
+.field-help {
+  margin-top: 7px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--clr-gray-500);
+}
+
+.field-help strong {
+  color: var(--clr-gray-700);
+  font-weight: 600;
+}
+
+.char-counter {
+  display: block;
+  margin-top: 5px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--clr-gray-400);
+}
+
+.char-counter.is-warn {
+  color: var(--clr-accent);
+  font-weight: 600;
+}
+
+.char-counter.is-full {
+  color: var(--clr-error);
+  font-weight: 600;
+}
+
+/* ============================================
+   Image cropper
+   ============================================ */
+
+.crop-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(18, 20, 23, 0.62);
+}
+
+.crop-backdrop[hidden] {
+  display: none;
+}
+
+.crop-dialog {
+  width: 100%;
+  max-width: 600px;
+  max-height: 94vh;
+  overflow-y: auto;
+  padding: 24px;
+  background: var(--clr-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.crop-dialog h2 {
+  font-family: var(--ff-heading);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--clr-gray-900);
+  margin-bottom: 6px;
+}
+
+.crop-hint {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--clr-gray-500);
+  margin-bottom: 16px;
+}
+
+.crop-stage {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  margin: 0 auto 16px;
+  background:
+    linear-gradient(45deg, var(--clr-gray-100) 25%, transparent 25%, transparent 75%, var(--clr-gray-100) 75%) 0 0 / 16px 16px,
+    linear-gradient(45deg, var(--clr-gray-100) 25%, transparent 25%, transparent 75%, var(--clr-gray-100) 75%) 8px 8px / 16px 16px,
+    var(--clr-white);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.crop-stage canvas {
+  display: block;
+  cursor: grab;
+  touch-action: none;
+}
+
+.crop-stage canvas:active {
+  cursor: grabbing;
+}
+
+/* Rule-of-thirds guides over the fixed-ratio crop area. */
+.crop-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-md);
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, .45) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, .45) 1px, transparent 1px);
+  background-size: 33.333% 33.333%;
+}
+
+.crop-zoom {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--clr-gray-600);
+}
+
+.crop-zoom input[type="range"] {
+  flex: 1;
+  accent-color: var(--clr-primary);
+  cursor: pointer;
+}
+
+.crop-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.crop-actions .btn-primary {
+  padding: 9px 20px;
+  font-size: 14px;
+}
+
+@media (max-width: 520px) {
+  .crop-dialog {
+    padding: 18px;
+  }
+
+  .crop-actions {
+    justify-content: stretch;
+  }
+
+  .crop-actions>* {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+}
+
+/* ============================================
+   Drag-to-reorder
+   ============================================ */
+
+.data-table .col-drag {
+  width: 62px;
+  white-space: nowrap;
+  color: var(--clr-gray-400);
+}
+
+/* --- display_order column -------------------------------------------- */
+
+.data-table .col-order {
+  width: 56px;
+  text-align: center;
+}
+
+/* Tabular figures so the numbers line up as a column of digits rather than
+   drifting with the proportional font — the point of showing them is that
+   they can be compared down the page at a glance. */
+.order-number {
+  display: inline-block;
+  min-width: 26px;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: var(--clr-gray-100);
+  color: var(--clr-gray-600);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* A repeated number means two items are tied and the order between them is
+   being decided by name, which looks like the list ignoring the value it is
+   showing. Flagged rather than silently corrected: which of the two should
+   come first is the admin's call, not ours. */
+.order-number.is-duplicate {
+  background: var(--clr-error-subtle);
+  color: var(--clr-error);
+  cursor: help;
+}
+
+.drag-handle {
+  cursor: grab;
+  font-size: 15px;
+  letter-spacing: -2px;
+  user-select: none;
+}
+
+tr[draggable="true"] {
+  cursor: grab;
+}
+
+tr.is-dragging {
+  opacity: 0.45;
+  background: var(--clr-primary-lighter);
+  cursor: grabbing;
+}
+
+.move-buttons {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+.move-buttons button {
+  padding: 0 4px;
+  font-size: 8px;
+  line-height: 1.4;
+  color: var(--clr-gray-500);
+  background: var(--clr-gray-100);
+  border: 1px solid var(--clr-gray-200);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.move-buttons button:hover {
+  color: var(--clr-primary-dark);
+  border-color: var(--clr-primary-light);
+}
+
+.reorder-notice,
+.reorder-status {
+  margin-bottom: 10px;
+  font-size: 12.5px;
+  color: var(--clr-gray-500);
+}
+
+.reorder-notice a {
+  color: var(--clr-primary);
+  font-weight: 600;
+}
+
+.reorder-status:empty {
+  margin: 0;
+}
+
+.reorder-status.is-error {
+  color: var(--clr-error);
+  font-weight: 600;
+}
+
+/* Count badge in the sidebar (Trash). Reuses the "Soon" pill shape. */
+.app-nav-count {
+  margin-left: auto;
+  min-width: 20px;
+  padding: 1px 7px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--clr-white);
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-full);
+}
+
+.app-nav-item.is-active .app-nav-count {
+  background: var(--clr-accent);
+}
+
+/* ============================================
+   TYPOGRAPHY — vertical rhythm
+   ============================================
+   Every heading in this file previously inherited body's line-height of
+   1.6. On an 18px title that bakes ~11px of leading into the line box,
+   which reads as loose text and — because the global reset zeroes all
+   margins — left titles sitting directly against their subtitles with no
+   deliberate gap at all.
+
+   The fix is to make spacing intentional rather than accidental:
+   headings get tight leading (1.15–1.3, per the type scale), and the
+   separation between a title and what follows comes from an explicit
+   margin instead of leftover line-box padding.
+
+   Containers already using flex `gap` are tuned via the gap, never with
+   margins, so the two can't double up.
+   ============================================ */
+
+:root {
+  --leading-heading: 1.25;
+  /* titles: tight, per spec 1.1–1.3 */
+  --leading-snug: 1.4;
+  /* labels, badges, short strings */
+  --leading-body: 1.6;
+  /* paragraphs: spec 1.5–1.6 */
+  --space-title: 6px;
+  /* title -> its own subtitle */
+  --space-block: 14px;
+  /* text block -> next block */
+}
+
+/* --- Headings ------------------------------------------------------- */
+.login-brand h1,
+.welcome-card h2,
+.module-header h1,
+.panel-header h2,
+.confirm-dialog h2,
+.crop-dialog h2 {
+  line-height: var(--leading-heading);
+  /* Large display type reads better slightly tightened. */
+  letter-spacing: -0.01em;
+}
+
+.stat-fieldset legend {
+  line-height: var(--leading-snug);
+}
+
+/* --- Title / subtitle pairs ----------------------------------------- */
+/* .login-brand and .stat-card are flex columns: their internal spacing
+   is the gap, so it is adjusted there rather than with margins. */
+.login-brand {
+  gap: 8px;
+}
+
+.login-brand p {
+  line-height: var(--leading-snug);
+}
+
+.stat-card {
+  gap: 4px;
+}
+
+.welcome-card h2 {
+  margin-bottom: var(--space-title);
+}
+
+.welcome-card p {
+  line-height: var(--leading-body);
+}
+
+.confirm-dialog h2 {
+  margin-bottom: var(--space-title);
+}
+
+.confirm-dialog p {
+  line-height: var(--leading-body);
+}
+
+.panel-header h2 {
+  margin-bottom: 0;
+}
+
+/* --- Body copy and helper text -------------------------------------- */
+.field-help,
+.reorder-notice,
+.upload-preview-meta,
+.data-table-secondary,
+.activity-feed-text,
+.list-pagination-status {
+  line-height: var(--leading-snug);
+}
+
+.field-help,
+.reorder-notice {
+  margin-top: 6px;
+}
+
+/* Uppercase micro-labels need looser tracking to stay legible. */
+.field label,
+.stat-card-label,
+.app-user-role {
+  line-height: var(--leading-snug);
+}
+
+/* --- Tables --------------------------------------------------------- */
+/* Two-line cells (primary + secondary) were relying on the inherited 1.6
+   to separate them, which made rows tall and the pairing ambiguous. */
+.data-table-primary {
+  line-height: var(--leading-snug);
+}
+
+.data-table-secondary {
+  margin-top: 3px;
+}
+
+/* --- Long-form readability ------------------------------------------ */
+/* Caps the measure so intro/help paragraphs don't run to 150+ characters
+   on a wide screen — spec target is 65–75 characters. */
+.welcome-card p,
+.empty-state,
+.field-help {
+  max-width: 72ch;
+}
+/* ============================================
+   Home Slideshow / Partner Logos / grouped forms
+   ============================================ */
+
+/* One-line explanation under a module's title - what the list controls on
+   the website, so nobody has to guess where their edit will show up. */
+.module-intro {
+  margin-top: 4px;
+  max-width: 62ch;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--clr-gray-500);
+}
+
+.module-header > div:first-child {
+  min-width: 0;
+}
+
+.module-header {
+  gap: 16px;
+}
+
+/* A titled group of related fields inside a form (Headline / Photo /
+   Publishing), same visual rhythm as the Page Content group headings. */
+.form-section {
+  border: 0;
+  margin: 0 0 8px;
+  padding: 20px 0 4px;
+  border-top: 1px solid var(--clr-gray-200);
+  min-width: 0;
+}
+
+.form-section:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.form-section > legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 10px;
+  font-family: var(--ff-heading);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--clr-gray-900);
+}
+
+.form-section > legend + * {
+  clear: both;
+}
+
+.form-section > .field-hint:first-of-type {
+  margin: 0 0 14px;
+}
+
+/* The green-italic second half of a slide headline, as the site shows it. */
+.text-accent {
+  font-style: italic;
+  color: #0e611d;
+}
+
+[data-theme="dark"] .text-accent {
+  color: #6fcf86;
+}
+
+.data-table-sub {
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--clr-gray-500);
+}
+
+.data-table-url {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--clr-gray-500);
+}
+
+.col-thumb {
+  width: 1%;
+}
+
+.table-thumb {
+  display: block;
+  width: 56px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--clr-gray-200);
+  background: var(--clr-gray-100);
+}
+
+.table-thumb--wide {
+  width: 88px;
+  height: 50px;
+}
+
+/* Logos keep their own shape - never cropped. */
+.table-thumb--logo,
+.grid-card-media--logo img,
+.current-image--logo img {
+  object-fit: contain !important;
+  background: #fff;
+  padding: 4px;
+}
+
+.table-thumb--logo {
+  width: 96px;
+  height: 40px;
+}
+
+.grid-card-media--logo {
+  aspect-ratio: 16 / 9;
+  background: #fff;
+}
+
+.current-image--wide img {
+  width: 160px;
+  height: 90px;
+}
+
+.current-image--logo img {
+  width: 160px;
+  height: 64px;
+}
+
+
+/* ============================================
+   UI tidy-up (2026-09-26) - found by rendering every admin screen at
+   1440 / 375px. Neutral palette unchanged; these fix layout bugs and
+   make the panel usable on a phone.
+   ============================================ */
+
+/* The hidden attribute lost to class rules that set display, so the empty
+   upload preview showed as a grey bar under every file field. */
+[hidden] {
+  display: none !important;
+}
+
+/* Grid children default to min-width:auto, so a wide table stretched the
+   whole main column - on a 375px phone list pages were 500-880px wide and
+   the page scrolled sideways. The table now scrolls inside its own box. */
+.app-main,
+.app-content {
+  min-width: 0;
+}
+
+/* --- Sidebar: grouped, and scrolls on its own so Settings is reachable
+   on a short laptop screen without scrolling the whole page. --- */
+@media (min-width: 721px) {
+  .app-sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
+}
+
+.app-nav-group {
+  margin: 14px 12px 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.app-nav-group:empty {
+  display: none;
+}
+
+.app-nav-item {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+/* --- Top bar: the dark-mode button had no styles at all and rendered as
+   a 4px speck beside the user name. --- */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--clr-gray-200);
+  border-radius: var(--radius-full);
+  background: var(--clr-white);
+  color: var(--clr-gray-600);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (hover: hover) {
+  .theme-toggle:hover {
+    background: var(--clr-gray-100);
+    color: var(--clr-gray-900);
+  }
+}
+
+.theme-toggle:focus-visible,
+.nav-toggle:focus-visible {
+  outline: 2px solid var(--clr-gray-900);
+  outline-offset: 2px;
+}
+
+.app-user-avatar {
+  background: var(--clr-gray-100);
+  border: 1px solid var(--clr-gray-200);
+  color: var(--clr-gray-900);
+}
+
+/* --- Tables --- */
+/* display:flex on the actions <td> took it out of the table layout: the
+   Edit/Delete cell sat above the row's centre line and its bottom border
+   stopped short of the rest of the row. The cell is a cell again; the
+   links inside keep their spacing. */
+td.data-table-actions {
+  display: table-cell;
+  vertical-align: middle;
+  white-space: nowrap;
+  text-align: right;
+}
+
+td.data-table-actions > * + * {
+  margin-left: 14px;
+}
+
+td.data-table-actions form {
+  display: inline;
+}
+
+.data-table th {
+  white-space: nowrap;
+}
+
+/* --- File inputs: styled button instead of the browser default. --- */
+.admin-form input[type="file"] {
+  padding: 6px;
+  font-size: 13px;
+  color: var(--clr-gray-600);
+  cursor: pointer;
+}
+
+.admin-form input[type="file"]::file-selector-button {
+  margin-right: 12px;
+  padding: 8px 14px;
+  border: 1px solid var(--clr-gray-300);
+  border-radius: var(--radius-full);
+  background: var(--clr-white);
+  color: var(--clr-gray-900);
+  font: 600 13px var(--ff-body);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+@media (hover: hover) {
+  .admin-form input[type="file"]::file-selector-button:hover {
+    background: var(--clr-gray-100);
+  }
+}
+
+/* --- Phones and small tablets --- */
+@media (max-width: 720px) {
+  .app-content {
+    padding: 20px 16px 32px;
+  }
+
+  .app-topbar {
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .app-topbar-left {
+    margin-right: auto;
+  }
+
+  /* Name + role take too much room beside three buttons; the avatar
+     still links to the account page. */
+  .app-user > div:last-child {
+    display: none;
+  }
+
+  .module-header {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .module-header .btn-primary {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  .list-toolbar > * {
+    flex: 1 1 100%;
+  }
+
+  .list-toolbar .list-filter,
+  .list-toolbar .btn-filter {
+    flex: 1 1 calc(50% - 5px);
+    min-height: 44px;
+  }
+
+  .form-row-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  td.data-table-actions > * + * {
+    margin-left: 10px;
+  }
+}
+
+/* The screen-reader-only labels inside table cells are position:absolute;
+   with no positioned ancestor inside the scroller they escaped its
+   clipping and widened the whole page on phones. */
+.table-scroll {
+  position: relative;
+}
+
+/* The dark-mode button and the user link sat on two lines - their wrapper
+   had no layout at all. */
+.app-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Phone drawer: 22 links plus group headings are taller than a phone
+   screen, so the drawer scrolls on its own. */
+@media (max-width: 720px) {
+  .app-shell.nav-open .app-sidebar {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+/* Log Out is a POST form (CSRF-protected); the form must not add layout. */
+.logout-form {
+  display: contents;
+}
+
+.btn-logout {
+  font-family: inherit;
+  line-height: inherit;
+}
+
+/* Programs -> Project photos: one row per photo, thumbnail beside its
+   caption / order / replace / remove fields. */
+.project-photo-list {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.project-photo {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  padding: 12px;
+  border: 1px solid var(--clr-gray-200, #e7e9ec);
+  border-radius: 12px;
+  background: var(--clr-white, #fff);
+  transition: opacity 0.2s ease;
+}
+
+.project-photo-thumb {
+  width: 132px;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+
+.project-photo-fields .field {
+  margin-bottom: 10px;
+}
+
+@media (max-width: 560px) {
+  .project-photo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .project-photo-thumb {
+    width: 100%;
+  }
+}
+
+/* Media Manager: thumbnails, the "+ N sizes" note, button-styled links. */
+.media-thumb {
+  object-fit: cover;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.media-variants {
+  display: block;
+  margin-top: 2px;
+  color: var(--clr-gray-500, #6b7280);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.data-table-actions button.link-edit {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Map Centers form: the pin-placing map. */
+.center-map {
+  height: 420px;
+  border: 1px solid var(--clr-gray-200, #e7e9ec);
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.center-map-pin {
+  width: 26px;
+  height: 26px;
+  border: 3px solid #fff;
+  border-radius: 50% 50% 50% 0;
+  background: var(--clr-accent, #c4691c);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
+  transform: rotate(-45deg);
+  cursor: grab;
+}
+
+@media (max-width: 560px) {
+  .center-map {
+    height: 320px;
+  }
+}
+
+/* --- Pages On/Off switch (modules/page-visibility) -------------------------
+   A submit button drawn as a switch: the track is dark when the page is on,
+   grey when it is off; the label beside it says what a click will do. */
+.page-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--clr-gray-700);
+  font: 600 13px var(--ff-body);
+  cursor: pointer;
+}
+
+.page-switch-track {
+  position: relative;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background: var(--clr-gray-300);
+  transition: background-color 0.2s var(--ease-smooth);
+}
+
+.page-switch-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--clr-white);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s var(--ease-smooth);
+}
+
+.page-switch[aria-checked="true"] .page-switch-track {
+  background: var(--clr-primary);
+}
+
+.page-switch[aria-checked="true"] .page-switch-thumb {
+  transform: translateX(20px);
+}
+
+.page-switch:focus-visible {
+  outline: 2px solid var(--clr-primary);
+  outline-offset: 3px;
+  border-radius: var(--radius-full);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-switch-track,
+  .page-switch-thumb {
+    transition: none;
+  }
+}

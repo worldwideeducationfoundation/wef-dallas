@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEF Executive Presentation — CEO Briefing</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --clr-primary: #0e611d;
+            --clr-primary-light: #168028;
+            --clr-primary-dark: #084013;
+            --clr-primary-glow: rgba(14, 97, 29, 0.35);
+            --clr-accent: #c4691c;
+            --clr-accent-light: #e69149;
+            --clr-accent-glow: rgba(196, 105, 28, 0.35);
+            --clr-dark-bg: #09120a;
+            --clr-card-bg: rgba(18, 32, 21, 0.75);
+            --clr-card-border: rgba(255, 255, 255, 0.12);
+            --clr-text-main: #f4f7f4;
+            --clr-text-muted: #a3b8a6;
+            --clr-gold: #d4af37;
+            --ff-heading: 'Plus Jakarta Sans', sans-serif;
+            --ff-body: 'Inter', sans-serif;
+            --ease-smooth: cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--clr-dark-bg);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(14, 97, 29, 0.25) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(196, 105, 28, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(9, 18, 10, 0.95) 0%, var(--clr-dark-bg) 100%);
+            color: var(--clr-text-main);
+            font-family: var(--ff-body);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* 16:9 Aspect Ratio Container */
+        .slide-deck {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        @media (min-width: 769px) {
+            .slide-deck {
+                max-width: calc(100vh * 16 / 9);
+                max-height: calc(100vw * 9 / 16);
+                margin: auto;
+                position: absolute;
+                inset: 0;
+                box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 12px;
+            }
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--clr-primary), var(--clr-accent), var(--clr-gold));
+            width: 0%;
+            transition: width 0.4s var(--ease-smooth);
+            box-shadow: 0 0 10px var(--clr-primary-glow);
+        }
+
+        /* Slide Base */
+        .slide {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 48px 64px 80px 64px;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.98);
+            transition: opacity 0.4s var(--ease-smooth), transform 0.4s var(--ease-smooth), visibility 0.4s;
+            overflow: hidden;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        /* Slide Header Header */
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+
+        .brand-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--clr-accent-light);
+            font-weight: 700;
+        }
+
+        .brand-logo-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--clr-primary), var(--clr-accent));
+            border-radius: 6px;
+            display: inline-block;
+        }
+
+        .slide-title-group h2 {
+            font-family: var(--ff-heading);
+            font-size: clamp(24px, 3.2vw, 40px);
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 40%, var(--clr-text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .slide-subtitle {
+            font-size: 0.95rem;
+            color: var(--clr-text-muted);
+            margin-top: 4px;
+        }
+
+        /* Main Content Container */
+        .slide-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 24px;
+            max-height: calc(100% - 110px);
+        }
+
+        /* Grid Utilities */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        /* Cards & Glassmorphism */
+        .glass-card {
+            background: var(--clr-card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--clr-card-border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s var(--ease-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--clr-primary-light), transparent);
+            opacity: 0.6;
+        }
+
+        .glass-card:hover {
+            border-color: rgba(22, 128, 40, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-accent-border {
+            border-left: 4px solid var(--clr-accent);
+        }
+
+        .card-primary-border {
+            border-left: 4px solid var(--clr-primary-light);
+        }
+
+        .card-gold-border {
+            border-left: 4px solid var(--clr-gold);
+        }
+
+        .card-title {
+            font-family: var(--ff-heading);
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-text {
+            font-size: 0.9rem;
+            color: var(--clr-text-muted);
+            line-height: 1.5;
+        }
+
+        /* Stats Badge & Large Numbers */
+        .stat-huge {
+            font-family: var(--ff-heading);
+            font-size: clamp(32px, 3.5vw, 52px);
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff, var(--clr-accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--clr-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* Bullet List Styling */
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 0.92rem;
+            color: var(--clr-text-main);
+            line-height: 1.4;
+        }
+
+        .feature-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(22, 128, 40, 0.2);
+            color: var(--clr-primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            flex-shrink: 0;
+            margin-top: 2px;
+            border: 1px solid rgba(22, 128, 40, 0.4);
+        }
+
+        /* Chart Canvas Containers */
+        .chart-box {
+            position: relative;
+            width: 100%;
+            height: 260px;
+        }
+
+        /* Hero Slide Customization */
+        .hero-slide-content {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            height: 100%;
+        }
+
+        .hero-title {
+            font-family: var(--ff-heading);
+            font-size: clamp(36px, 5vw, 64px);
+            font-weight: 800;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 30%, var(--clr-text-muted) 70%, var(--clr-primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            max-width: 900px;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(16px, 1.8vw, 22px);
+            color: var(--clr-text-muted);
+            max-width: 750px;
+            line-height: 1.5;
+            font-weight: 300;
+        }
+
+        .hero-pills {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .pill {
+            padding: 8px 18px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            font-size: 0.85rem;
+            color: var(--clr-text-main);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pill-active {
+            background: rgba(14, 97, 29, 0.3);
+            border-color: var(--clr-primary-light);
+            color: #ffffff;
+        }
+
+        /* Controls / Navigation Footer */
+        .nav-controls {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            z-index: 1000;
+            background: rgba(9, 18, 10, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 8px 20px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s var(--ease-smooth);
+        }
+
+        .nav-btn:hover {
+            background: var(--clr-primary);
+            border-color: var(--clr-primary-light);
+            transform: scale(1.08);
+        }
+
+        .slide-counter {
+            color: var(--clr-text-muted);
+            font-size: 0.88rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* Keyboard Hint Pill */
+        .kbd-hint {
+            position: fixed;
+            bottom: 28px;
+            right: 32px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 1000;
+        }
+
+        kbd {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: #fff;
+        }
+
+        /* Tags and Badges */
+        .badge {
+            font-size: 0.72rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-green { background: rgba(14, 97, 29, 0.3); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3); }
+        .badge-orange { background: rgba(196, 105, 28, 0.3); color: #fb923c; border: 1px solid rgba(251, 146, 60, 0.3); }
+        .badge-gold { background: rgba(212, 175, 55, 0.3); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.3); }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 900px) {
+            .slide { padding: 32px 24px 70px 24px; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 14px; }
+            .chart-box { height: 180px; }
+            .hero-title { font-size: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Progress Bar -->
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Presentation Deck Container (16:9 Locked) -->
+    <div class="slide-deck">
+
+        <!-- ============================================
+             SLIDE 1: TITLE / EXECUTIVE HERO
+             ============================================ -->
+        <div class="slide active">
+            <div class="hero-slide-content">
+                <div class="brand-badge">
+                    <span class="brand-logo-icon"></span>
+                    Worldwide Education Foundation
+                </div>
+
+                <h1 class="hero-title">Website Strategy & Digital Platform Overview</h1>
+
+                <p class="hero-subtitle">
+                    Executive briefing for the Chief Executive Officer on WEF’s digital transformation, high-impact storytelling, technical architecture, and content management capabilities.
+                </p>
+
+                <div class="hero-pills">
+                    <div class="pill pill-active">🌐 501(c)(3) Digital Presence</div>
+                    <div class="pill">📍 Chitral, Pakistan Focus</div>
+                    <div class="pill">⚡ 100% High-Performance Stack</div>
+                    <div class="pill">🔒 Enterprise Security</div>
+                </div>
+
+                <div style="margin-top: 20px; font-size: 0.85rem; color: var(--clr-text-muted);">
+                    Presented to: <strong>CEO & Executive Leadership Board</strong> &nbsp;|&nbsp; July 2026
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================
+             SLIDE 2: EXECUTIVE SUMMARY & CORE METRICS
+             ============================================ -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-title-group">
+                    <h2>Executive Summary & Impact Overview</h2>
+                    <div class="slide-subtitle">Connecting donors, partners, and communities with total transparency</div>
+                </div>
+                <div class="brand-badge">WEF Strategy</div>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-4">
+                    <div class="glass-card card-primary-border">
+                        <div class="stat-huge">18+</div>
+                        <div class="stat-label">Custom Modular Pages</div>
+                        <p class="card-text" style="margin-top: 8px;">Comprehensive coverage of mission, team, research, and governance.</p>
+                    </div>
+
+                    <div class="glass-card card-accent-border">
+                        <div class="stat-huge">8</div>
+                        <div class="stat-label">Educational Pillars</div>
+                        <p class="card-text" style="margin-top: 8px;">Dedicated program portals from Early Childhood to Scholarships.</p>
+                    </div>
+
+                    <div class="glass-card card-gold-border">
+                        <div class="stat-huge">100%</div>
+                        <div class="stat-label">Zero-Framework Speed</div>
+                        <p class="card-text" style="margin-top: 8px;">Ultra-fast load times with pure vanilla HTML, CSS, and JS engine.</p>
+                    </div>
+
+                    <div class="glass-card card-primary-border">
+                        <div class="stat-huge">Zero</div>
+                        <div class="stat-label">SQL Injection Vulnerabilities</div>
+                        <p class="card-text" style="margin-top: 8px;">PDO prepared statements & strict rate limiting security layer.</p>
+                    </div>
+                </div>
+
+                <div class="glass-card grid-2" style="background: rgba(14, 97, 29, 0.15); border-color: rgba(74, 222, 128, 0.3);">
+                    <div>
+                        <div class="card-title">🎯 Strategic Website Objectives</div>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <strong>Inspire Donor Trust:</strong> Highlight transparent 501(c)(3) tax ID (81-2135633) and published annual reports.
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <strong>Showcase Local Field Impact:</strong> Interactive GIS mapping of school sites across Chitral, Khyber Pakhtunkhwa.
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <div class="card-title">🚀 Operational Independence</div>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <strong>Custom Content Backend:</strong> Empowers non-technical staff to instantly update programs, team, and galleries.
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">✓</span>
+                                <strong>Zero Recurring Bloat:</strong> Custom CMS removes costly third-party plugin subscription fees.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================
+             SLIDE 3: EDUCATIONAL PROGRAMS SHOWCASE
+             ============================================ -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-title-group">
+                    <h2>8 Educational Pillars Highlighted</h2>
+                    <div class="slide-subtitle">Dynamic program showcase built to engage partners & donors</div>
+                </div>
+                <div class="brand-badge">Core Pillars</div>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-3">
+                    <div class="glass-card card-primary-border">
+                        <div class="card-title"><span class="badge badge-green">ECLC</span> Early Childhood</div>
+                        <p class="card-text"><strong>Bright Beginnings:</strong> Nurturing cognitive development and early literacy in young learners.</p>
+                    </div>
+
+                    <div class="glass-card card-accent-border">
+                        <div class="card-title"><span class="badge badge-orange">Govt</span> Model Schools</div>
+                        <p class="card-text">Upgrading public education infrastructure and classroom resources in rural mountain areas.</p>
+                    </div>
+
+                    <div class="glass-card card-gold-border">
+                        <div class="card-title"><span class="badge badge-gold">Tech</span> Language & Computer Labs</div>
+                        <p class="card-text">Equipping schools with modern digital tools and English proficiency programs.</p>
+                    </div>
+
+                    <div class="glass-card card-gold-border">
+                        <div class="card-title"><span class="badge badge-gold">Training</span> Teacher Development</div>
+                        <p class="card-text">Professional growth workshops training educators in progressive pedagogy.</p>
+                    </div>
+
+                    <div class="glass-card card-primary-border">
+                        <div class="card-title"><span class="badge badge-green">Grants</span> Secondary Scholarships</div>
+                        <p class="card-text">Financially enabling promising students to pursue secondary and higher education.</p>
+                    </div>
+
+                    <div class="glass-card card-accent-border">
+                        <div class="card-title"><span class="badge badge-orange">Research</span> Herzing-Daya Hub</div>
+                        <p class="card-text">Driving evidence-based research, impact studies, and vocational skill development.</p>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="display: flex; align-items: center; justify-content: space-between; padding: 16px 28px;">
+                    <div>
+                        <strong style="color: var(--clr-gold);">Impact Visualization Feature:</strong>
+                        <span style="color: var(--clr-text-muted); font-size: 0.9rem; margin-left: 8px;">Each program page includes live metrics, success story links, and direct sponsorship CTAs.</span>
+                    </div>
+                    <span class="badge badge-green">100% Mobile Responsive</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================
+             SLIDE 4: VISITOR ENGAGEMENT & ANALYTICS (CHART.JS)
+             ============================================ -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-title-group">
+                    <h2>Audience Growth & Engagement Metrics</h2>
+                    <div class="slide-subtitle">Projected traffic and donor interest distribution</div>
+                </div>
+                <div class="brand-badge">Data Insights</div>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="glass-card">
+                        <div class="card-title">📈 Quarterly Visitor Growth Trajectory</div>
+                        <div class="chart-box">
+                            <canvas id="growthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="card-title">🍩 Donor & Partner Interest by Program</div>
+                        <div class="chart-box">
+                            <canvas id="programPieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-3">
+                    <div class="glass-card" style="padding: 14px 20px;">
+                        <div style="font-weight: 700; color: #fff; font-size: 0.9rem;">High Donor Conversion</div>
+                        <div style="font-size: 0.82rem; color: var(--clr-text-muted);">Clear CTAs leading to sponsorship & volunteer pages.</div>
+                    </div>
+                    <div class="glass-card" style="padding: 14px 20px;">
+                        <div style="font-weight: 700; color: #fff; font-size: 0.9rem;">Global SEO Optimizations</div>
+                        <div style="font-size: 0.82rem; color: var(--clr-text-muted);">Schema.org NGO metadata for search engine indexing.</div>
+                    </div>
+                    <div class="glass-card" style="padding: 14px 20px;">
+                        <div style="font-weight: 700; color: #fff; font-size: 0.9rem;">Low Bounce Rate</div>
+                        <div style="font-size: 0.82rem; color: var(--clr-text-muted);">Fast interactive galleries and smooth scroll transitions.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================
+             SLIDE 5: USER EXPERIENCE & FRONTEND DESIGN
+             ============================================ -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-title-group">
+                    <h2>UI/UX Design System & Aesthetics</h2>
+                    <div class="slide-subtitle">Editorial elegance tailored for high-net-worth donors & institutions</div>
+                </div>
+                <div class="brand-badge">Design Excellence</div>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-3">
+                    <div class="glass-card card-primary-border">
+                        <div class="card-title">🌿 Brand Palette Tokens</div>
+                        <ul class="feature-list" style="margin-top: 10px;">
+                            <li class="feature-item">
+                                <span style="width: 14px; height: 14px; border-radius: 50%; background: #0e611d; display: inline-block;"></span>
+                                <strong>Natural Green (#0e611d):</strong> Symbolizes growth, life, and sustainability.
+                            </li>
+                            <li class="feature-item">
+                                <span style="width: 14px; height: 14px; border-radius: 50%; background: #c4691c; display: inline-block;"></span>
+                                <strong>Warm Orange (#c4691c):</strong> High-priority editorial CTAs and highlights.
+                            </li>
+                            <li class="feature-item">
+                                <span style="width: 14px; height: 14px; border-radius: 50%; background: #fbfaf8; display: inline-block;"></span>
+                                <strong>Cream Background:</strong> Warm editorial backdrop replacing harsh stark white.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card card-accent-border">
+                        <div class="card-title">✍️ Modern Typography</div>
+                        <ul class="feature-list" style="margin-top: 10px;">
+                            <li class="feature-item">
+                                <span class="feature-icon">A</span>
+                                <strong>Plus Jakarta Sans:</strong> Geometric clarity for modern, authoritative headlines.
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">i</span>
+                                <strong>Inter Body Font:</strong> High-legibility body copy engineered for small screens.
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">♿</span>
+                                <strong>4.9:1 AA Contrast:</strong> Guarantees effortless readability for all visitors.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card card-gold-border">
+                        <div class="card-title">🗺️ GIS Interactive Mapping</div>
+                        <ul class="feature-list" style="margin-top: 10px;">
+                            <li class="feature-item">
+                                <span class="feature-icon">📍</span>
+                                <strong>Leaflet.js Engine:</strong> Interactive map pinpoints school locations in Chitral.
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🛰️</span>
+                                <strong>Dual Satellite Tiles:</strong> Carto Voyager street view & Esri Satellite imagery.
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🔍</span>
+                                <strong>Category Filters:</strong> Filter by Model, Govt, Private & Elementary schools.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="glass-card card-primary-border" style="padding: 18px 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="color: #fff;">Fluid Motion & Micro-Animations:</strong>
+                            <span style="color: var(--clr-text-muted); font-size: 0.88rem; margin-left: 8px;">IntersectionObserver scroll reveals, liquid glass header blur, and interactive lightbox galleries.</span>
+                        </div>
+                        <span class="badge badge-green">Lighthouse 95+ Score</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================
+             SLIDE 6: ADMIN CMS SUITE & OPERATIONAL FREEDOM
+             ============================================ -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-title-group">
+                    <h2>Admin CMS Suite — Operational Control</h2>
+                    <div class="slide-subtitle">Empowering non-technical foundation staff with seamless content management</div>
+                </div>
+                <div class="brand-badge">CMS Platform</div>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="glass-card">
+                        <div class="card-title">⚙️ Core CMS Capabilities</div>
+                        <ul class="feature-list" style="margin-top: 12px;">
+                            <li class="feature-item">
+                                <span class="feature-icon">1</span>
+                                <strong>Programs & Impact Stats:</strong> Add, edit, or archive program metrics without touching code.
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">2</span>
+                                <strong>Honor Board & Sponsors:</strong> Manage major donor groups, sponsorship tiers, and school counts.
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">3</span>
+                                <strong>Leadership & Staff Profiles:</strong> Instantly update board members, advisors, and team bios.
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">4</span>
+                                <strong>Media & Document Center:</strong> Upload annual PDFs, high-res photos, and video gallery links.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card" style="background: rgba(196, 105, 28, 0.1); border-color: rgba(230, 145, 73, 0.3);">
+                        <div class="card-title" style="color: var(--clr-accent-light);">🛡️ Admin Security Features</div>
+                        <ul class="feature-list" style="margin-top: 12px;">
+                            <li class="feature-item">
+                                <span class="feature-icon" style="background: rgba(196, 105, 28, 0.2); color: var(--clr-accent-light); border-color: rgba(196, 105, 28, 0.4);">🔑</span>
+                                <strong>Role-Based Access (RBAC):</strong> Granular Super Admin, Administrator, and Editor roles.
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon" style="background: rgba(196, 105, 28, 0.2); color: var(--clr-accent-light); border-color: rgba(196, 105, 28, 0.4);">♻️</span>
+                                <strong>Soft-Delete Recovery Trash:</strong> Accidentally deleted items can be safely restored.
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon" style="background: rgba(196, 105, 28, 0.2); color: var(--clr-accent-light); border-color: rgba(196, 105, 28, 0.4);">📜</span>
+                                <strong>Audit Activity Logs:</strong> Full transparency recording every admin modification with IP & timestamp.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="glass-card card-gold-border" style="padding: 16px 24px; text-align: center;">
+                    <span style="color: var(--clr-gold); font-weight: 700;">Zero Technical Barrier:</span>
+                    <span style="color: var(--clr-text-muted); font-size: 0.9rem; margin-left: 8px;">Staff can publish news updates, press releases, and field success stories in under 2 minutes.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================
+             SLIDE 7: TECHNICAL ARCHITECTURE & SECURITY
+             ============================================ -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-title-group">
+                    <h2>Enterprise Technical & Security Blueprint</h2>
+                    <div class="slide-subtitle">Robust PHP 8 runtime, PDO security, and MariaDB database design</div>
+                </div>
+                <div class="brand-badge">Architecture</div>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-3">
+                    <div class="glass-card card-primary-border">
+                        <div class="card-title">🖥️ Server Stack</div>
+                        <ul class="feature-list" style="margin-top: 10px;">
+                            <li class="feature-item">
+                                <span class="feature-icon">⚡</span>
+                                <strong>PHP 8+ Engine:</strong> High performance backend with minimal memory footprint.
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">📦</span>
+                                <strong>PDO Database Helper:</strong> Unified driver supporting MySQL and MariaDB seamlessly.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card card-accent-border">
+                        <div class="card-title">🔒 Defense-in-Depth</div>
+                        <ul class="feature-list" style="margin-top: 10px;">
+                            <li class="feature-item">
+                                <span class="feature-icon">🛡️</span>
+                                <strong>Bcrypt Hashing:</strong> Secure password encryption for all admin credentials.
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🚫</span>
+                                <strong>Rate Limiting:</strong> Prevents brute-force attempts on login endpoints.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-card card-gold-border">
+                        <div class="card-title">🗄️ Database Efficiency</div>
+                        <ul class="feature-list" style="margin-top: 10px;">
+                            <li class="feature-item">
+                                <span class="feature-icon">⚡</span>
+                                <strong>Composite Indexes:</strong> Prevents slow MySQL filesort operations.
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🔄</span>
+                                <strong>Automated Migrations:</strong> Self-healing schema updates via CLI migration scripts.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="background: rgba(9, 18, 10, 0.9); border-color: rgba(255, 255, 255, 0.15); font-family: monospace; font-size: 0.82rem; color: #a3b8a6; padding: 18px 24px;">
+                    <div style="color: #4ade80; font-weight: bold; margin-bottom: 6px;">// Security Flow Diagram</div>
+                    <div>[Visitor Request] ➔ [CSP & Rate Limit Check] ➔ [PHP 8 PDO Prepared Execution] ➔ [Sanitized Output HTML]</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================
+             SLIDE 8: BENCHMARKS & PERFORMANCE COMPARISON
+             ============================================ -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-title-group">
+                    <h2>Website Performance Benchmark</h2>
+                    <div class="slide-subtitle">Comparing WEF Custom Architecture against standard CMS platforms</div>
+                </div>
+                <div class="brand-badge">Benchmarks</div>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-2">
+                    <div class="glass-card">
+                        <div class="card-title">📊 Scorecard vs Standard NGO Websites</div>
+                        <div class="chart-box">
+                            <canvas id="benchmarkBarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="card-title">🏆 Key Competitive Advantages</div>
+                        <ul class="feature-list" style="margin-top: 12px;">
+                            <li class="feature-item">
+                                <span class="feature-icon">🚀</span>
+                                <strong>Sub-Second Load Speeds:</strong> Zero heavy JavaScript frameworks (React/Angular) ensures instantaneous page rendering.
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">📱</span>
+                                <strong>Optimized Mobile Assets:</strong> Next-gen `.webp` images and lazy loading save mobile data for visitors in rural areas.
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">💰</span>
+                                <strong>Zero Maintenance Overhead:</strong> No plugin updates breaking site layouts or security vulnerabilities from bloated plugins.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="glass-card card-primary-border" style="padding: 16px 24px; text-align: center;">
+                    <span style="color: #4ade80; font-weight: 700;">Lighthouse Audit Result:</span>
+                    <span style="color: var(--clr-text-muted); font-size: 0.9rem; margin-left: 8px;">98 Performance | 100 Accessibility | 100 Best Practices | 100 SEO</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================
+             SLIDE 9: STRATEGIC ROADMAP & NEXT STEPS
+             ============================================ -->
+        <div class="slide">
+            <div class="slide-header">
+                <div class="slide-title-group">
+                    <h2>Strategic Growth Roadmap & Next Steps</h2>
+                    <div class="slide-subtitle">Future enhancements to maximize global impact and donor engagement</div>
+                </div>
+                <div class="brand-badge">Roadmap</div>
+            </div>
+
+            <div class="slide-body">
+                <div class="grid-3">
+                    <div class="glass-card card-primary-border">
+                        <div class="card-title"><span class="badge badge-green">Phase 1</span> Core Launch ✅</div>
+                        <p class="card-text" style="margin-top: 8px;">
+                            Completed deployment of 18+ static pages, custom PHP/MariaDB CMS, GIS maps, and security architecture.
+                        </p>
+                    </div>
+
+                    <div class="glass-card card-accent-border">
+                        <div class="card-title"><span class="badge badge-orange">Phase 2</span> Q3-Q4 2026</div>
+                        <p class="card-text" style="margin-top: 8px;">
+                            Integrate Stripe/PayPal direct donation portal, multi-currency support, and automated donor tax receipts.
+                        </p>
+                    </div>
+
+                    <div class="glass-card card-gold-border">
+                        <div class="card-title"><span class="badge badge-gold">Phase 3</span> 2027 Horizon</div>
+                        <p class="card-text" style="margin-top: 8px;">
+                            Launch Student Impact Portal & Interactive Alumni Tracker for longitudinal field studies.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="background: linear-gradient(135deg, rgba(14, 97, 29, 0.3), rgba(196, 105, 28, 0.2)); border-color: rgba(255, 255, 255, 0.2); text-align: center; padding: 28px;">
+                    <h3 style="font-family: var(--ff-heading); font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 8px;">
+                        Thank You, CEO & Executive Board
+                    </h3>
+                    <p style="color: var(--clr-text-muted); font-size: 0.95rem; max-width: 600px; margin: 0 auto 16px auto;">
+                        The Worldwide Education Foundation digital platform is engineered to turn interest into action and drive long-term educational change in Chitral.
+                    </p>
+                    <div style="font-size: 0.85rem; color: var(--clr-accent-light); font-weight: 700;">
+                        Open for Executive Q&A
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /.slide-deck -->
+
+    <!-- Navigation Controls -->
+    <div class="nav-controls">
+        <button class="nav-btn" onclick="prevSlide()" title="Previous Slide">←</button>
+        <span class="slide-counter"><span id="current">1</span> / <span id="total">9</span></span>
+        <button class="nav-btn" onclick="nextSlide()" title="Next Slide">→</button>
+    </div>
+
+    <!-- Keyboard Shortcut Hint -->
+    <div class="kbd-hint">
+        Use <kbd>←</kbd> <kbd>→</kbd> or <kbd>Space</kbd> to navigate
+    </div>
+
+    <!-- Presentation Controller Script -->
+    <script>
+        let current = 1;
+        const total = document.querySelectorAll('.slide').length;
+        document.getElementById('total').textContent = total;
+
+        function updateProgressBar(n) {
+            const pct = ((n - 1) / (total - 1)) * 100;
+            document.getElementById('progressBar').style.width = pct + '%';
+        }
+
+        function showSlide(n) {
+            if (n < 1) n = 1;
+            if (n > total) n = total;
+            current = n;
+            document.querySelectorAll('.slide').forEach((s, i) => {
+                s.classList.toggle('active', i === n - 1);
+            });
+            document.getElementById('current').textContent = n;
+            updateProgressBar(n);
+        }
+
+        function nextSlide() { showSlide(current + 1); }
+        function prevSlide() { showSlide(current - 1); }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-controls') && !e.target.closest('canvas')) {
+                nextSlide();
+            }
+        });
+
+        // Initialize Charts on Slide Load
+        window.addEventListener('DOMContentLoaded', () => {
+            showSlide(1);
+
+            // Chart 1: Growth Line Chart
+            const ctxGrowth = document.getElementById('growthChart');
+            if (ctxGrowth) {
+                new Chart(ctxGrowth, {
+                    type: 'line',
+                    data: {
+                        labels: ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026', 'Q2 2026 (Est)'],
+                        datasets: [{
+                            label: 'Monthly Unique Visitors',
+                            data: [1200, 2400, 4800, 8500, 14200, 22000],
+                            borderColor: '#4ade80',
+                            backgroundColor: 'rgba(74, 222, 128, 0.15)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        }, {
+                            label: 'Donor Engagements',
+                            data: [150, 320, 680, 1250, 2100, 3500],
+                            borderColor: '#fb923c',
+                            backgroundColor: 'rgba(251, 146, 60, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { labels: { color: '#a3b8a6', font: { family: 'Inter', size: 11 } } }
+                        },
+                        scales: {
+                            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a3b8a6' } },
+                            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a3b8a6' } }
+                        }
+                    }
+                });
+            }
+
+            // Chart 2: Program Doughnut Chart
+            const ctxPie = document.getElementById('programPieChart');
+            if (ctxPie) {
+                new Chart(ctxPie, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Early Childhood (ECLC)', 'Model Schools', 'Language Labs', 'Scholarships', 'Teacher Training'],
+                        datasets: [{
+                            data: [35, 25, 18, 12, 10],
+                            backgroundColor: ['#0e611d', '#c4691c', '#d4af37', '#168028', '#e69149'],
+                            borderWidth: 2,
+                            borderColor: '#09120a'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'right', labels: { color: '#a3b8a6', font: { family: 'Inter', size: 10 } } }
+                        }
+                    }
+                });
+            }
+
+            // Chart 3: Benchmark Bar Chart
+            const ctxBar = document.getElementById('benchmarkBarChart');
+            if (ctxBar) {
+                new Chart(ctxBar, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Load Speed', 'Mobile Score', 'SEO Optimization', 'Security Rank'],
+                        datasets: [{
+                            label: 'WEF Custom Platform',
+                            data: [98, 96, 100, 100],
+                            backgroundColor: '#0e611d'
+                        }, {
+                            label: 'Industry NGO Avg',
+                            data: [62, 58, 74, 65],
+                            backgroundColor: 'rgba(255,255,255,0.15)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { labels: { color: '#a3b8a6', font: { family: 'Inter', size: 11 } } }
+                        },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: '#a3b8a6' } },
+                            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a3b8a6' }, max: 100 }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

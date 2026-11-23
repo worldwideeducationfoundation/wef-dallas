@@ -1,0 +1,307 @@
+﻿<?php
+
+/**
+ * Fallback data for Completed Projects.
+ *
+ * The real content lives in the `completed_projects` table now (see
+ * publishedCompletedProjects() / publishedCompletedProjectBySlug() in
+ * includes/content.php) and is fully editable from the admin panel. This
+ * array is only read when the database is unreachable, so the site still
+ * renders — the same role static-data.php plays for every other content
+ * type. Kept in the same shape the table uses: image_path and friends are
+ * relative to admin/uploads/ (resolved through uploadUrl()), and
+ * map_image_path/video_url are plain values the template builds safe
+ * markup from, not raw HTML.
+ */
+
+function getCompletedProjects()
+{
+    return [
+        [
+            'id' => 1,
+            'slug' => 'global-virtual-school',
+            'title' => 'Global Virtual School (GVS)',
+            'summary' => 'Enhancing access to and refining English-language skills training in some of the most economically disadvantaged and underserved regions worldwide.',
+            'description' => "The General ESL (English as a Second Language) and the EAP (English for Academic Purposes) programs by Global Virtual School are dedicated to enhancing access to and refining English-language skills training in some of the most economically disadvantaged and underserved regions worldwide. In these areas, acquiring proficient English-language skills serves as a means to break the cycle of generational poverty. The program actively advocates for gender equality, maintaining an admission policy that ensures a fifty-percent female representation in every learning space.\n\nFurthermore, the program actively cultivates Global Competence by urging learners, even in remote villages, to challenge themselves in mastering language proficiency and achieving a native-speaker level of English. The trusted Cambridge IGCSE curriculum supports students in advancing their English proficiency to an advanced level, equipping them for successful careers or further education. Through the utilization of past papers, students undergo assessments to ensure they are aligned with global standards and comparable to their peers worldwide.\n\nGlobal Virtual School (GVS) offers learners a non-traditional classroom setting, fostering the development of critical thinking and problem-solving skills that are not typically emphasized in traditional educational settings but are highly valued in the job market. The youth-to-youth connection establishes a supportive learning atmosphere, enhancing learner confidence.\n\n### Current Impact\nIn collaboration with partners like the US State Department and University of Central Asia, GVS connects volunteer-teachers with eager learners in real-time virtual classrooms. GVS aims to graduate over 5,000 proficient English speakers by 2025, empowering them to escape generational poverty. At present, GVS has significant impact in 14 countries and 30 centers where it equips over 1300 students with the language skills needed to pursue higher education, vocational training, and improved career prospects.\n\n### Locations\nIndia, Tajikistan, Afghanistan, Kyrgyzstan, Nepal, Pakistan, Kazakhstan, Guinea, Cabo Verde, Senegal, Mauritania, Niger, Bangladesh, Uzbekistan.",
+            'location' => '14 Countries',
+            'completion_year' => 'Active',
+            'category' => 'English Education',
+            'image_path' => 'programs/completed projects/Global Virtual School.webp',
+            'secondary_image_path' => 'programs/completed projects/Global Virtual School (GVS) 2.webp',
+            'stat1_value' => '20k+',
+            'stat1_label' => 'Students',
+            'stat2_value' => '200+',
+            'stat2_label' => 'Teachers',
+            'stat3_value' => '40+',
+            'stat3_label' => 'Learning Spaces'
+        ],
+        [
+            'id' => 2,
+            'slug' => 'vocational-skill-training-jaipur',
+            'title' => 'Vocational Skill Training Program, Jaipur India',
+            'summary' => 'Empowering youth with practical skills for the modern workforce in Jaipur.',
+            'description' => "Location: Jaipur, Rajasthan, India\nStatus: Implemented\nDuration: December 2018 – July 2020\n\n### Project Description\nThe Worldwide Education Fund (WEF) in collaboration with Edu-Girls and Vimukti Sanstha embarked on a transformative project aimed at empowering deserving girls from minority communities. With a generous grant of $10,000 from WEF, the initiative focused on providing vocational training scholarships to 26 girls, fostering financial independence and breaking the cycle of generational poverty.\n\nTargeting an average family income of less than Rs 8,350 ($121) per month for families with an average size of 5, Vimukti Sanstha identified courses such as Beautician, Nursery Teachers Training, Apparel Design, etc., tailored to the aptitude of each girl. Through joint counseling and assessment, the selected girls were admitted and supported under these programs, which included not only the training itself but also transportation assistance.\n\nThe overarching vision of the project is to equip these girls with essential skill sets, enabling them to thrive in their chosen fields and secure a respectable source of income. Beyond the immediate impact on the individuals involved, the initiative aspires to create a ripple effect, ensuring that these girls become valuable contributors to the workforce, thereby uplifting themselves and their communities.",
+            'location' => 'Jaipur, Rajasthan, India',
+            'completion_year' => '2020',
+            'category' => 'Vocational Training',
+            'image_path' => 'programs/completed projects/Vocational Skill Training Program, Jaipur India.webp',
+            'stat1_value' => '26',
+            'stat1_label' => 'Girls Trained',
+            'stat2_value' => '$10k',
+            'stat2_label' => 'Grant Given',
+            'stat3_value' => '3+',
+            'stat3_label' => 'Courses',
+            'map_image_path' => 'programs/completed projects/Vocational Skill Training Program, Jaipur India map.webp'
+        ],
+        [
+            'id' => 3,
+            'slug' => 'vocational-training-wef-vt',
+            'title' => 'Worldwide Education Fund –Vocational Training (WEF-VT) Scholars Program at Emeralde',
+            'summary' => 'A scalable model for vocational education across multiple regions.',
+            'description' => "Location: Mariam Zaveri’s Emeralde International Institute of Hair and Beauty located in Bandra, Mumbai\nStatus: Implemented\nDuration: October 2015 – May 2016\n\n### Project Description\nLaunched in October 2015, the WEF-VT Scholars Program at Emeralde is an impactful initiative by the WEF Student Ambassador Association (ISAA) in collaboration with the Foundation to Support Education Worldwide (FSEW), Emeralde International Institute of Hair and Beauty, and FEEB Unlimited. Responding to the increasing demand for candidates with vocational and technical skills, the program awarded full scholarships to deserving individuals in suburban Mumbai and rural Gujarat.\n\nSuccessful recipients underwent a transformative experience, benefiting from a full scholarship to Mariam Zaveri’s Emeralde International Institute of Hair and Beauty. The 6-month professional course in hair and beauty, along with a certification in skin-peel technology, equipped these young girls with foundational skills for a lifetime. This initiative not only enabled them to contribute financially to their families but also served as a trampoline, helping them break free from the cycle of generational poverty.\n\nAs a gesture of support, each candidate received a token kit of tools of the trade from the Worldwide Education Fund at the end of the program. All students have successfully graduated, with some already securing positions as beauticians in local parlors. WEF congratulates these graduates on their achievements, marking a significant step toward a brighter and more empowered future.",
+            'location' => 'Bandra, Mumbai',
+            'completion_year' => '2016',
+            'category' => 'Vocational Training',
+            'image_path' => 'programs/completed projects/Vocational training (WEF-VT).webp',
+            'stat1_value' => '1.2k',
+            'stat1_label' => 'Graduates',
+            'stat2_value' => '30',
+            'stat2_label' => 'Trainers',
+            'stat3_value' => '5',
+            'stat3_label' => 'Centers'
+        ],
+        [
+            'id' => 4,
+            'slug' => 'computers-to-uca-spce',
+            'title' => 'Computers To UCA-SPCE',
+            'summary' => 'Providing essential hardware to support advanced technological learning.',
+            'description' => "Location: Khorog, Tajikistan\nStatus: Implemented\nDuration: September 2017 – September 2018\n\n### Project Description\nThe Worldwide Education Fund of  The Dallas Foundation, has generously contributed to the University of Central Asia School of Professional and Continuing Education (UCA-SPCE). Following last year’s donation of 10 high-speed desktop computers, WEF has recently added 11 more, enhancing the capacity and efficiency of the computer lab at UCA-SPCE.\n\nThe primary goal of this initiative is to broaden the scope of education by utilizing these computers to offer classes to students who may face challenges accessing UCA-SPCE’s facilities. This expansion aims to provide enhanced teaching options, ensuring educational opportunities reach a wider audience.\n\nAligned with the scholarship program’s vision, the project anticipates that graduates will benefit from a cutting-edge facility in Khorog, making a meaningful impact on society. Moreover, the computer lab, equipped with high-speed computers, serves as a platform for certified teachers trained through WEF scholarships to conduct Emerging Technology courses. This strategic collaboration between WEF and UCA-SPCE underscores a commitment to advancing education and empowering students for a technology-driven future.",
+            'location' => 'Khorog, Tajikistan',
+            'completion_year' => '2018',
+            'category' => 'Infrastructure',
+            'image_path' => 'programs/completed projects/Computers To UCA-SPCE.webp',
+            'stat1_value' => '200+',
+            'stat1_label' => 'Computers',
+            'stat2_value' => '1',
+            'stat2_label' => 'Institution',
+            'stat3_value' => '100%',
+            'stat3_label' => 'Upgraded',
+            'map_image_path' => 'programs/completed projects/Computers To UCA-SPCE map.webp',
+            'video_url' => 'https://www.youtube.com/embed/TC_LfKX1dI8?si=hp7ZnG2SDxaQBcaY'
+        ],
+        [
+            'id' => 5,
+            'slug' => 'khorog-advanced-english',
+            'title' => 'Khorog Advanced English Language Course',
+            'summary' => 'Elevating language proficiency for better global opportunities.',
+            'description' => "Location: Khorog, Tajikistan\nStatus: Implemented\n\n### Project Description\nIn partnership with the local NGO “Partner+Transfers,” the Worldwide Education Fund of the Dallas Foundation initiated a collaborative effort to enhance the IELTS scores of college-bound students in Khorog town. This project, catering to the unique challenges of the geographically isolated Gorno-Badakhshan Autonomous Region (GBAO), aimed to address the lack of IELTS preparation courses in the area.\n\nIdentifying the need for accessible language proficiency programs, the project selected 20 students through an assessment test, conducting classes five days a week in Khorog. The curriculum, designed to provide a comprehensive approach, focused on enhancing skills in speaking, listening, reading, and writing for the IELTS exam.\n\nThe significance of IELTS (International English Language Testing System) as a gateway to global opportunities cannot be overstated. For students in GBAO, the harsh weather conditions and geographical isolation often restrict access to such courses, typically available only in Dushanbe. This advanced English Language Course not only bridged this gap but also empowered students to prepare for the IELTS exam right at their doorstep, eliminating financial barriers and fostering educational opportunities in the region.",
+            'location' => 'Khorog, Tajikistan',
+            'completion_year' => '2019',
+            'category' => 'Language Education',
+            'image_path' => 'programs/completed projects/Khorog Advanced English Language Course.webp',
+            'stat1_value' => '20',
+            'stat1_label' => 'Students',
+            'stat2_value' => '90%',
+            'stat2_label' => 'Pass Rate',
+            'stat3_value' => '5',
+            'stat3_label' => 'Days a Week'
+        ],
+        [
+            'id' => 6,
+            'slug' => 'academy-superior-services',
+            'title' => 'Academy For Superior Services',
+            'summary' => 'Training the next generation of civil and public servants.',
+            'description' => "Location: Gilgit Baltistan and Chitral\nStatus: Implemented\nDuration: November 2018 – November 2019\n\n### Project Description\nIn collaboration with the Aga Khan Economic Planning Board Pakistan, the Worldwide Education Fund of The Dallas Foundation (WEF) has launched a scholarship program for the youth of Gilgit Baltistan and Chitral. This initiative supports 26 aspiring candidates in preparing for the Civil Superior Services program, covering their examination fees and preparation costs. Selected through a rigorous testing and interview process, these students are enrolled in Pakistan’s leading academy, with the vision of increasing the induction of educated unemployed youth from remote areas into the civil services, enhancing their opportunities and contributing to the essential functioning of the state.",
+            'location' => 'Gilgit Baltistan and Chitral',
+            'completion_year' => '2019',
+            'category' => 'Higher Education',
+            'image_path' => 'programs/completed projects/Academy for Superior Services.webp',
+            'stat1_value' => '26',
+            'stat1_label' => 'Candidates',
+            'stat2_value' => '100%',
+            'stat2_label' => 'Funded',
+            'stat3_value' => '1',
+            'stat3_label' => 'Year',
+            'map_image_path' => 'programs/completed projects/Academy For Superior Services map.webp'
+        ],
+        [
+            'id' => 7,
+            'slug' => 'herzing-scholarship',
+            'title' => 'Herzing University Scholarship 2017-2019',
+            'summary' => 'Full-ride scholarships enabling outstanding students to study abroad.',
+            'description' => "Location: India, Pakistan, and Tajikistan\nStatus: Implemented\nDuration: 2017-2019\n\n### Herzing University Scholarship 2017 – 2019\nThe WEF-Herzing University-MBA Scholarship, a program by the Worldwide Education Fund (WEF) in collaboration with Herzing University, aims to provide educational opportunities for disadvantaged students in India, Pakistan, and Tajikistan. The scholarship enables qualified recipients to enroll in Herzing University’s MBA program, either at campuses in Atlanta, Georgia, or Madison, Wisconsin, or through online courses in their home countries. The scholarship covers MBA tuition fees, while accommodation expenses during the program are covered by WEF. However, travel costs, book expenses, and monthly stipends are not included.\n\nIntended for hardworking postgraduate students with a strong command of English, the scholarship seeks to empower individuals who aspire to transform their lives and contribute to reshaping the economic future of their home countries. The WEF-Herzing University Scholars Cohort 2017-2019 successfully launched the MBA Scholarship Program, with ten selected students, six of whom have already commenced their studies in Atlanta, GA. These students, representing marginalized communities in Tajikistan and Pakistan, receive full-tuition scholarships from Herzing University, along with residential scholarships from WEF. The program also includes special career mentoring sessions, aiming to cultivate these students as catalysts for economic and social uplift in their communities.",
+            'location' => 'India, Pakistan, and Tajikistan',
+            'completion_year' => '2019',
+            'category' => 'Scholarships',
+            'image_path' => 'programs/completed projects/Herzing University Scholarship 2017-2019.webp',
+            'stat1_value' => '10',
+            'stat1_label' => 'Scholars',
+            'stat2_value' => '100%',
+            'stat2_label' => 'Funded',
+            'stat3_value' => '2',
+            'stat3_label' => 'Years'
+        ],
+        [
+            'id' => 8,
+            'slug' => 'global-learners-capacity',
+            'title' => 'Global Learners Capacity Building Project',
+            'summary' => 'Enhancing educational infrastructure and teaching methodologies globally.',
+            'description' => "Location: Houston, Texas USA\nStatus: Implemented\nDuration: June 2018-May 2019\n\n### Project Description\nThe Worldwide Education Fund (WEF) partnered with the Partnership for the Advancement and Immersion of Refugees (PAIR) to launch a project aimed at engaging refugee youth in educational mentoring after-school programs. Through the integration of app-based literacy, numeracy, tutoring, and enrichment programs, the Global Learners initiative serves over 100 refugee students from three Houston Independent School District (HISD) middle schools with significant refugee populations.\n\nTargeting schools like Las Americas Newcomer School, Jane Long Academy, and Revere Middle School, where students lack personal computers and individual access to laptops, the Global Learners program addressed the limited capacity to effectively use web-based educational software. The project incorporated 18 tablets, with six assigned to each program, facilitating tutoring, research, and computer literacy components.\n\nDuring academic/tutoring time, English and math app-based tutoring programs were integrated into the program, allowing students to use tablets for homework that required internet access. The tablets were also equipped with learning apps to help students practice English and math skills during homework time. In the last quarter, 68% of students reported using the tablets for homework, math or English apps, or both, with 43% using them at least once a week at PAIR. This initiative underscores WEF’s commitment to bridging educational gaps and providing essential resources for refugee youth in Houston.",
+            'location' => 'Houston, Texas USA',
+            'completion_year' => '2019',
+            'category' => 'Capacity Building',
+            'image_path' => 'programs/completed projects/Global Learners Capacity Building Project.webp',
+            'stat1_value' => '100+',
+            'stat1_label' => 'Students',
+            'stat2_value' => '18',
+            'stat2_label' => 'Tablets',
+            'stat3_value' => '3',
+            'stat3_label' => 'Schools'
+        ],
+        [
+            'id' => 9,
+            'slug' => 'tech-upgrades-h3',
+            'title' => 'Technology Upgrades For Head Heart Hands (H3) Program',
+            'summary' => 'Modernizing the H3 holistic education program with new technology.',
+            'description' => "Location: Dallas Texas, USA\nStatus: Implemented\nDuration: September 2017 – September 2018\n\n### Project Description\nWEF collaborates with Hearth House to empower refugee children with technology education. Recognizing the limited access to technology in their backgrounds, this initiative aims to upgrade outdated resources, offering students the opportunity to engage in diverse disciplines like online research, typing, coding, and website creation. These practical skills level the playing field, enhancing readiness for higher academic pursuits and future employment.\n\nThe technology infusion will bolster the core program at Hearth House, known as the Head, Heart, and Hands (H3) program. Focused on cognitive learning, character development, and building self-esteem, H3 offers academic support, play therapy, and social-emotional programming. The grant initiative targets 60 students, providing them with a pathway to future success through enhanced technological resources and comprehensive educational support.",
+            'location' => 'Dallas Texas, USA',
+            'completion_year' => '2018',
+            'category' => 'Infrastructure',
+            'image_path' => 'programs/completed projects/Technology Upgrades For Head, Heart, Hands (H3) Program.webp',
+            'stat1_value' => '60',
+            'stat1_label' => 'Students',
+            'stat2_value' => '100%',
+            'stat2_label' => 'Funded',
+            'stat3_value' => '4+',
+            'stat3_label' => 'Skills Taught'
+        ],
+        [
+            'id' => 10,
+            'slug' => 'project-mala-scholarships',
+            'title' => 'Project MALA Secondary College Scholarships',
+            'summary' => 'Supporting secondary education for disadvantaged children.',
+            'description' => "Location: Project Mala Schools at Guria Secondary School (Varanasi, Uttar Pradesh)\nStatus: Implemented\nDuration: September 2015 – 2020\n\n### Project Description\nWEF partnered with Project Mala to fund the Secondary College Scholarships Program at Guria Secondary School near Varanasi, Uttar Pradesh. This initiative supported 10 students with tuition fees, healthcare, and meals, providing access to quality international education and English language skills training. WEF’s grant of $24,000 sponsored 24 secondary school students from October 2015 to November 2020.\n\nThe vision of this project was to break the cycle of generational poverty in India by providing education to marginalized students. WEF aimed to empower these students to become agents of change in their communities through education, proper healthcare, and nutrition, ultimately breaking the cycle of multi-generational poverty.",
+            'location' => 'Varanasi, Uttar Pradesh',
+            'completion_year' => '2020',
+            'category' => 'Scholarships',
+            'image_path' => 'programs/completed projects/Project MALA Secondary College Scholarships.webp',
+            'stat1_value' => '24',
+            'stat1_label' => 'Students',
+            'stat2_value' => '$24k',
+            'stat2_label' => 'Grant Given',
+            'stat3_value' => '1',
+            'stat3_label' => 'School'
+        ],
+        [
+            'id' => 11,
+            'slug' => 'baltistan-scholarships',
+            'title' => 'Sakina of Project Hunza & Gilgit Baltistan Secondary Scholarship',
+            'summary' => 'Providing scholarships and professional development for girls in Hunza and Baltistan.',
+            'description' => "Location: Hunza and Baltistan, Pakistan\n\n### Project Description\nWEF’s contributions to the Iqra Fund institution consist of providing secondary and higher school scholarships and professional development sessions offered to all 56 girls living in the various communities of the Hunza and Baltistan regions. The WEF program targets areas that experience harsh weather conditions, lack of infrastructure, and an overwhelming poverty population size. They believe that areas as such are in desperate need of educational funding since most families earn a low income and rely on subsistence farming. The Hunza and Baltistan regions receive no government support; thus, most children residing there are stripped of their educational rights. In addition to the difficulty of obtaining an education, families who can afford schooling often don’t send their children due to the costs of lodging and transportation. WEF recognizes these difficulties and uses them as motivation to fund schooling and all other expenses for innocent children who deserve a pathway to a sustainable education. As a result, WEF has partnered with the Iqra Fund to ensure these children can reach their full potential in all educational aspects.\n\n### Meet Sakina\nNow, Sakina is thriving in high school in Skardu and aspires to become a doctor to serve her community. She also feels that by becoming a doctor, she will be able to encourage her community to enable their girls to follow their dreams, the way her parents did for her.\n\n“Girls in my village have a lot of potential, but they live a very hard life of work at home and in the fields, and all their potential go to waste. I want to show them they can achieve their dreams, like me”.",
+            'location' => 'Hunza and Baltistan, Pakistan',
+            'completion_year' => 'Active',
+            'category' => 'Scholarships',
+            'image_path' => 'programs/completed projects/Baltistan Primary and Secondary School Scholarships.webp',
+            'stat1_value' => '56',
+            'stat1_label' => 'Girls',
+            'stat2_value' => '100%',
+            'stat2_label' => 'Funded',
+            'stat3_value' => '2',
+            'stat3_label' => 'Regions'
+        ],
+        [
+            'id' => 12,
+            'slug' => 'literacy-program-st-placids',
+            'title' => 'Literacy Program at St. Placid’s School, Chittagong, Bangladesh',
+            'summary' => 'A targeted intervention to boost foundational literacy skills.',
+            'description' => "Location: Chittagong, Bangladesh\nStatus: Active\n\n### Project Description\nThe main goal of the Literacy Program is to educate individuals from economically disadvantaged backgrounds, enabling them to break the cycle of generational poverty. Three organizations with shared values have come together to champion this initiative: the Old Placidian Association (OPA), the Foundation to Support Education Worldwide (FSEW) based in the USA, and the Worldwide Education Fund of The Dallas Foundation (WEF), also based in the USA.\n\nThrough a collaborative agreement, WEF, FSEW, and OPA are joining forces to enrich the Literacy Program. This partnership involves providing advisory services and the necessary funding to expand the current program, aiming to make a significant impact on the educational opportunities available to individuals from underprivileged families.\n\n### Current Impact\nPresently, the Old Placidian Association (OPA) oversees a Literacy Program for 250 underserved boys in Chittagong, Bangladesh, up to the 5th grade. There is a recognized necessity to extend the program’s reach, expanding it from the 5th standard to the 10th standard.",
+            'location' => 'Chittagong, Bangladesh',
+            'completion_year' => 'Active',
+            'category' => 'Early Education',
+            'image_path' => 'programs/completed projects/Literacy_Program_at_St_Placids_School.webp',
+            'secondary_image_path' => 'programs/completed projects/Literacy_Program_at_St_Placids_School_2.webp',
+            'stat1_value' => '250',
+            'stat1_label' => 'Boys',
+            'stat2_value' => '3',
+            'stat2_label' => 'Partners',
+            'stat3_value' => '1',
+            'stat3_label' => 'School'
+        ],
+        [
+            'id' => 13,
+            'slug' => 'digital-training-gilgit',
+            'title' => 'Digital Training and Placement Program in Gilgit Baltistan, Pakistan',
+            'summary' => 'Equipping youth with in-demand digital skills for the modern economy.',
+            'description' => "Location: Gilgit Baltistan, Pakistan\nStatus: Implemented\n\n### Project Description\nThe program’s objective is to provide training opportunities for the youth in Gilgit Baltistan, equipping them with digital skills essential for engaging in the gig economy. This initiative unfolds through a sequence of workshops focused on fostering digital competencies, empowering the youth in the targeted region to establish new sources of income.\nIn collaboration with Green Berry Digital (GBD), WEF is dedicated to creating job opportunities for 1000 young individuals in Gilgit Baltistan. These opportunities include freelancing roles or positions in local and international companies, all made possible through the acquisition of digital skills. The aim is to enhance the employability of youth in the region and contribute to their economic empowerment.\n\n### Current Impact\n22 skilled individuals from Gilgit Baltistan possess the required qualifications: 10 hold degrees in Accounting and Finance, while 12 have graduated in Digital Marketing.",
+            'location' => 'Gilgit Baltistan, Pakistan',
+            'completion_year' => 'Active',
+            'category' => 'Vocational Training',
+            'image_path' => 'programs/completed projects/Digital Training and Placement Program Gilgit Baltistan, Pakistan.webp',
+            'secondary_image_path' => 'programs/completed projects/Digital Training and Placement Program in Gilgit Baltistan, Pakistan 2.webp',
+            'tertiary_image_path' => 'programs/completed projects/Digital Training and Placement Program in Gilgit Baltistan, Pakistan 3.webp',
+            'stat1_value' => '1000',
+            'stat1_label' => 'Target Jobs',
+            'stat2_value' => '22',
+            'stat2_label' => 'Qualified',
+            'stat3_value' => '2',
+            'stat3_label' => 'Degrees'
+        ],
+        [
+            'id' => 14,
+            'slug' => 'digital-marketing-tajikistan',
+            'title' => 'Digital Marketing Assistant Program, Tajikistan',
+            'summary' => 'Empowering young people through specialized e-commerce and digital skills.',
+            'description' => "Location: Tajikistan\nStatus: Active\n\n### Project Description\nThis comprehensive initiative focuses on delivering Digital Marketing courses at UCA-SPCE through certified facilitators, mirroring the successful model established for the Cyber Security course. With the overarching goal of creating employment opportunities for youth in Central Asia, the project adopts a “train the trainer” approach. Qualified candidates with teaching skills and an IT background are identified, certifying themselves and committing to two years of teaching at local learning institutions. Following certification, these facilitators will collaborate with UCA-SPCE to initiate Digital Marketing Assistant Courses, and subsequently, UCA-SPCE will employ them to teach online.\n\n![Flowchart](programs/completed projects/Digital Marketing Assistant Program, Tajikistan Flowchart.png)\n\nTo ensure accessibility, the courses will be integrated into UCA’s Learning Management System (LMS), enabling online training for students in Afghanistan and Northern Pakistan. The chosen facilitators will undergo a digital marketing certification course offered by Shaw Academy (https://www.shawacademy.com/en-us/).\n\nThe project’s Proof of Concept Execution Plan includes connecting graduates with emerging digital marketing skills to opportunities in IT services and consulting companies, thereby fostering a comprehensive approach to skill development and sustainable employment in the region.",
+            'location' => 'Tajikistan',
+            'completion_year' => 'Active',
+            'category' => 'Vocational Training',
+            'image_path' => 'programs/completed projects/Digital Marketing Assistant Program, Tajikistan.webp',
+            'stat1_value' => '2',
+            'stat1_label' => 'Years',
+            'stat2_value' => '1',
+            'stat2_label' => 'LMS',
+            'stat3_value' => '100%',
+            'stat3_label' => 'Certified'
+        ],
+        [
+            'id' => 15,
+            'slug' => 'ecdc-chitral',
+            'title' => 'Early Childhood Development Centre, Pakistan',
+            'summary' => 'Fostering optimal growth through specialized Montessori environments.',
+            'description' => "Location: Chitral, Khyber Pakhtunkhwa, Pakistan\nStatus: Active\n\n### Project Description\nThe mission of the Worldwide Education Fund (WEF), USA is to create and support Early Childhood Development Programs in underserved communities across South and Central Asian countries. In these regions, existing educational systems struggle to meet the developmental needs of children under the age of 6.\n\nWEF collaborates with both governmental and non-governmental organizations to establish Early Childhood Development (ECD) centers. These centers provide a dedicated space where children aged 3-5 can gather in an environment designed to foster their optimal growth. The facilities are equipped with specialized furniture, tools, and materials, all aimed at stimulating the children’s physical, socio-emotional, and intellectual development.\n\nTrained Montessori Teachers play a crucial role in these centers, guiding and facilitating the children’s learning experiences. The goal is to enhance the children’s senses and promote their overall development during these foundational years. Through these efforts, WEF aims to make a positive impact on the lives of young children in marginalized communities, setting the stage for a brighter future.\n\n### Current Impact\nSituated at a low-cost private school, our Early Childhood Development Centre, Chitral, stands out as the first of its kind to embrace the Montessori Method of learning. We pride ourselves on being fully equipped with ECD materials that align with the core philosophy of Maria Montessori. Our dedicated teachers are certified by the Pakistan Montessori Council, ensuring a commitment to excellence.\n\nAt our ECD Centre, we are breaking away from traditional teaching and learning methods. We emphasize parent participation by providing opportunities for them to attend parent teaching sessions, engage in classroom observations, and participate in storytelling activities.\n\nCurrently, the center accommodates 40 children aged 3-5 years in two sessions, fostering a student-centered learning experience. Over the past three years, our ECD Centre has successfully graduated 60 students, and we eagerly anticipate making a positive impact on even more young minds in the future.",
+            'location' => 'Chitral, Pakistan',
+            'completion_year' => 'Active',
+            'category' => 'Early Education',
+            'image_path' => 'programs/completed projects/Early Childhood Development Centre Chitral, Pakistan.webp',
+            'secondary_image_path' => 'programs/completed projects/Early Childhood Development Centre, Pakistan 2.webp',
+            'stat1_value' => '40', 'stat1_label' => 'Children',
+            'stat2_value' => '60', 'stat2_label' => 'Graduates',
+            'stat3_value' => '3', 'stat3_label' => 'Years'
+        ],
+        [
+            'id' => 16,
+            'slug' => 'wef-hu-mba-scholars-mehrunissa',
+            'title' => 'WEF-HU MBA PROGRAM SCHOLARS MEHRUNISSA BARKATALI',
+            'summary' => 'A blog by WEF-HU MBA Scholar Mehrunissa Barkatali about her transformative experience.',
+            'description' => "Location: Karachi, Pakistan\n\n### Blog by Mehrunissa Barkatali\nThis blog is written by WEF-HU MBA Scholar Mehrunissa Barkatali who is currently doing her 4th Semester in Herzing University Atlanta, USA. She is originally from Karachi, Pakistan. The WEF-HU MBA Scholarship Program is a unique chance to experience something amazing. Applying for this scholarship had changed my life forever. I did not know what an amazing journey was waiting for me. When I came to the US everything was new, like the host family. It is unreal. I cannot forget the first meeting at the airport and the first hug from people who were going to be your “second” family forever. Then I was living, adjusting and becoming a part of this family. Only by being a student, I learned such things as being responsible, thinking ahead and how appreciating all, that I had. When you live in another country, you start forming a new life opinion.The biggest thing I have learned during staying in the US, was how to be an adult.\n\nMy year in America helped me to grow up and see things differently. That is really important to me. My host family, my university (Herzing University) became a part of my life forever and I will never forget the experience of becoming the part of the family, traveling together or participating at school. This new environment really helped me to find something new, that I can love and connect to my life for a long time. Thank you.",
+            'location' => 'Karachi, Pakistan',
+            'completion_year' => 'Active',
+            'category' => 'Scholarships',
+            'image_path' => 'programs/completed projects/Herzing University Scholarship 2017-2019.webp',
+            'stat1_value' => '1', 'stat1_label' => 'Scholar',
+            'stat2_value' => '4th', 'stat2_label' => 'Semester',
+            'stat3_value' => '100%', 'stat3_label' => 'Funded'
+        ]
+    ];
+}
+
+function getCompletedProjectBySlug($slug)
+{
+    $projects = getCompletedProjects();
+    foreach ($projects as $project) {
+        if ($project['slug'] === $slug) {
+            return $project;
+        }
+    }
+    return null;
+}

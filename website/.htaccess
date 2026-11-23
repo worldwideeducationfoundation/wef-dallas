@@ -1,0 +1,79 @@
+# The top of the uploaded site - on Hostinger this file IS public_html/.htaccess.
+#
+# Everything in this folder is uploaded as-is into public_html. Only public/
+# is meant to be reachable: includes/, config/ and storage/ sit beside it and
+# hold the PHP libraries, the database password and the backups. Hostinger
+# does not let the document root be moved into public/, so this file does the
+# job instead:
+#
+#   - every request is forwarded into public/ internally. The visitor's
+#     address never shows /public/: /our-team is served by
+#     public/our-team.php, /admin/ by public/admin/.
+#   - the private folders are refused before anything is forwarded.
+#
+# Under XAMPP the same file runs at http://localhost/WEF/website/ (and at
+# http://localhost/WEF/, through the development .htaccess one level up).
+# Nothing here names a folder, so it works at any depth unchanged.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # The private tree is refused outright and is never forwarded. Listed
+    # explicitly so a request for /includes/db.php is denied here rather than
+    # rewritten into public/includes/db.php and answered with a 404 - the
+    # result would look similar, but only one of them is a deliberate refusal.
+    RewriteRule ^(includes|config|storage)(/|$) - [F,L]
+
+    # Force HTTPS on the live domain. Here rather than only in public/.htaccess
+    # because this is where the visitor's own address is still in
+    # %{REQUEST_URI}; after forwarding it would read /public/... and the
+    # redirect would expose that. Conditions as in public/.htaccess: skip if
+    # TLS ended at Hostinger's proxy (X-Forwarded-Proto) and skip localhost.
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+    RewriteCond %{HTTP_HOST} !^localhost [NC]
+    RewriteCond %{HTTP_HOST} !^127\.0\.0\.1 [NC]
+    RewriteCond %{HTTP_HOST} !\.local$ [NC]
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+    # A folder asked for without its trailing slash (/admin): add the slash
+    # here. Left to Apache it would be added after forwarding, and the
+    # redirect would show the internal address (/public/admin/). The first
+    # condition finds this folder on disk (%3: Apache stops the file path at
+    # the first segment that does not exist here, %1), the second checks for
+    # the whole path inside public/, the third takes the address the browser
+    # actually asked for.
+    RewriteCond $1::%{REQUEST_FILENAME} ^([^/]+)(.*)::(.*/)\1$
+    RewriteCond %3public/%1%2 -d
+    RewriteCond %{THE_REQUEST} ^[A-Z]+\s([^?\s]*[^/?\s])[?\s]
+    RewriteRule ^(.*[^/])$ %1/ [R=301,L,NE]
+
+    # Anything else is served from public/. A request already inside public/
+    # never reaches this file (public/.htaccess has its own rules, and Apache
+    # and LiteSpeed only run the deepest folder's), so this cannot loop.
+    RewriteCond %{REQUEST_URI} !/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Fallback for a server without mod_rewrite: deny everything rather than serve
+# the private tree. The site would not work, which is the safe failure.
+<IfModule !mod_rewrite.c>
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</IfModule>
+
+# Belt and braces for stray files that end up at this level.
+<FilesMatch "\.(md|py|sql|gz|log|ini|dist|sample|bak|orig)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>

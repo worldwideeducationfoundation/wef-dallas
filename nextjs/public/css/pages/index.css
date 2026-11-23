@@ -1,0 +1,83 @@
+/* Moved verbatim from the inline <style> in website/public/index.php */
+        .hero-slide-dots {
+          position: absolute;
+          bottom: 28px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          z-index: 100;
+          padding: 6px 14px;
+          border-radius: 9999px;
+          background: rgba(15, 23, 42, 0.45);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .slide-dot {
+          border: none;
+          cursor: pointer;
+          padding: 0;
+          outline: none;
+          display: inline-block;
+          transition: all 0.3s ease;
+        }
+
+        .slide-dot.prev-dot, .slide-dot.next-dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+          .slide-dot.prev-dot:hover, .slide-dot.next-dot:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: scale(1.2);
+          }
+        }
+
+        .slide-dot.center-dot {
+          width: 18px;
+          height: 7px;
+          border-radius: 9999px;
+          background: #c69214;
+          box-shadow: 0 0 8px rgba(198, 146, 20, 0.6);
+        }
+
+        /* Mobile: grow the tap area without changing how the dots look.
+           Measured 7x7 and 18x7 CSS px on a phone — these are the only control
+           for changing hero slides, and a 7px target is roughly a fifth of the
+           44px guidance in each direction.
+
+           The visible dot is unchanged: padding enlarges the button box while
+           background-clip: content-box keeps the paint confined to the
+           original 7px circle, and content-box sizing stops the padding from
+           eating the declared width. Nothing here applies above 768px, so the
+           desktop carousel is untouched.
+
+           This override lives in this page rather than in css/styles.css
+           because these dots are restyled by this inline <style> block, which
+           comes after the stylesheet link and therefore wins at equal
+           specificity — the same rule placed in styles.css had no effect. */
+        @media (max-width: 768px) {
+          .slide-dot {
+            box-sizing: content-box;
+            background-clip: content-box;
+            /* 19px each side + the 7px dot = 45px tall, clearing the 44px
+               guidance. 18px landed on 43 and missed it by one. */
+            padding: 19px 14px;
+          }
+
+          /* The row is centred and absolutely positioned, so the extra padding
+             would otherwise inflate the pill behind it. */
+          .hero-slide-dots {
+            padding: 0 4px;
+            gap: 0;
+          }
+        }
+      

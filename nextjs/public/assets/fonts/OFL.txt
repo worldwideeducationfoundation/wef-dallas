@@ -1,0 +1,12 @@
+The fonts in this directory are licensed under the
+SIL Open Font License, Version 1.1.
+
+  Inter              (c) The Inter Project Authors — https://github.com/rsms/inter
+  Plus Jakarta Sans  (c) Tokotype — https://github.com/tokotype/PlusJakartaSans
+  Cinzel             (c) Natanael Gama — https://github.com/NDISCOVER/Cinzel
+  DM Sans            (c) Colophon Foundry — https://github.com/googlefonts/dm-fonts
+
+Full licence text: https://openfontlicense.org/open-font-license-official-text/
+
+These files were retrieved from Google Fonts by tools/fetch-fonts.php and are
+redistributed here unmodified, which the licence expressly permits.

@@ -1,0 +1,10 @@
+# Private uploads (e.g. future scholarship/volunteer application files) —
+# must never be directly downloadable by URL, only read server-side by an
+# authenticated PHP script. Same rule as config/.htaccess and admin/config/.htaccess.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+</IfModule>

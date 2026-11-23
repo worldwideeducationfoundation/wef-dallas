@@ -1,0 +1,32 @@
+# Uploaded files must never execute as code, even if a malicious upload ever
+# slipped past the MIME-sniffing check in includes/upload.php. That check is
+# the real defense (stored extensions come from the sniffed type, never the
+# uploader's filename); this is backup that holds under mod_php and
+# PHP-FPM/FastCGI alike.
+
+# mod_php: turn the engine off for this tree.
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+
+# Handler-based setups (PHP-FPM via AddHandler/SetHandler, CGI): detach them.
+<IfModule mod_mime.c>
+    RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .php8 .phar .pht .cgi .pl .py .sh
+    RemoveType .php .phtml .php3 .php4 .php5 .php7 .php8 .phar .pht
+</IfModule>
+Options -ExecCGI -Indexes
+
+# And refuse to serve anything script-like at all, case-insensitively (.PHP,
+# .Php) and including every PHP extension Apache distributions map.
+<FilesMatch "(?i)\.(php[0-9]?|pht|phtml|phar|phps|cgi|pl|py|sh|shtml)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
